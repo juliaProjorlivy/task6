@@ -1,0 +1,3 @@
+[submodule "lib/stack"]
+	path = lib/stack
+	url = git@github.com:juliaProjorlivy/task5.git
