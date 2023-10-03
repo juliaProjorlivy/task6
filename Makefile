@@ -16,7 +16,7 @@ build/%.o: src/%.cpp
 	@$(CXX) $(CXX_FLAGS) -c -o $@ $<
 
 submodule/submodule.a:
-    make -C submodule
+	-C submodule
 
 .PHONY: clean mem
 

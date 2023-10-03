@@ -2,7 +2,6 @@
 #include "verror.h"
 #include <stdio.h>
 #include <math.h>
-#include "full_stack.h"
 #include <assert.h>
 
 int is_equal(elem_t x, elem_t y, double epsilon = 1e-9)
