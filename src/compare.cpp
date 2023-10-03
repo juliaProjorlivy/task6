@@ -3,7 +3,7 @@
 #include "commands.h"
 #include "verror.h"
 
-enum commands str_to_digit(const char *line)
+command_t str_to_digit(const char *line)
 {
     for(size_t i = 0; i < n_commands; i++)
     {
@@ -37,7 +37,7 @@ int convert_file(const char *file_name, const char *bc_file_name)
 
     while(fscanf(file, "%s", data_commands) != EOF)
     {
-        enum commands command = str_to_digit((const char *)data_commands);
+        command_t command = str_to_digit((const char *)data_commands);
 
         if(fprintf(bc_file, "%d", command) < 0)
         {

@@ -3,7 +3,7 @@
 
 #include <stdio.h>
 
-enum commands
+typedef enum
 {
     NOT_COMMAND = 0,
     PUSH = 1,
@@ -17,9 +17,9 @@ enum commands
     IN,
     OUT,
     HLT,
-};
+}command_t;
 
-enum commands d_commands[] = { PUSH, ADD, SUB, MUL, DIV, SQRT, COS, SIN, IN, OUT, HLT};
+command_t d_commands[] = { PUSH, ADD, SUB, MUL, DIV, SQRT, COS, SIN, IN, OUT, HLT};
 
 const char *str_commands[] = {"push", "add", "sub", "mul", "div", "sqrt", "cos", "sin", "in", "out", "hlt"};
 
