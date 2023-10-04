@@ -1,10 +1,9 @@
-#include "commands.h"
 #include "verror.h"
-#include <stdio.h>
+#include "runner.h"
 #include <math.h>
 #include <assert.h>
-
-int is_equal(elem_t x, elem_t y, double epsilon = 1e-9)
+    
+static int is_equal(elem_t x, elem_t y, double epsilon = 1e-9)
 {
     assert (isfinite (x));
     assert (isfinite (y));
@@ -13,16 +12,35 @@ int is_equal(elem_t x, elem_t y, double epsilon = 1e-9)
     return (fabs (x - y) < epsilon);
 }
 
-// void push(struct stack *stk,)
-// {
+void hlt(struct stack *stk)
+{
+    stack_dtor(stk);
+}
 
-// }
+void push(struct stack *stk, FILE *file)
+{
+    elem_t arg = 0;
+    int is_correctly_read = fscanf(file, ELEM_PRINT_SPEC, &arg);
+
+    if(!is_correctly_read)
+    {
+        VERROR("troubles reading the file");
+    }
+
+    stack_push(stk, arg);
+}
 
 void in(struct stack *stk, FILE *file)
 {
     elem_t arg = 0;
-    int correctly_read = fscanf(file, ELEM_PRINT_SPEC, &arg);
-    stack_push()
+    int is_correctly_read = fscanf(file, ELEM_PRINT_SPEC, &arg);
+
+    if(!is_correctly_read)
+    {
+        VERROR("troubles reading the file");
+    }
+
+    stack_push(stk, arg);
 }
 
 void add(struct stack *stk)
@@ -65,7 +83,7 @@ void div(struct stack *stk)
     }
 }
 
-void sqrt(struct stack *stk)
+void sqroot(struct stack *stk)
 {
     elem_t arg = 0;
     stack_pop(stk, &arg);
@@ -80,7 +98,7 @@ void sqrt(struct stack *stk)
     }
 }
 
-void sin(struct stack *stk)
+void sinus(struct stack *stk)
 {
     elem_t arg = 0;
     stack_pop(stk, &arg);
@@ -88,7 +106,7 @@ void sin(struct stack *stk)
     stack_push(stk, sin(arg));
 }
 
-void cos(struct stack *stk)
+void cosine(struct stack *stk)
 {
     elem_t arg = 0;
     stack_pop(stk, &arg);
@@ -103,6 +121,3 @@ elem_t out(struct stack *stk)
 
     return arg;
 }
-
-    command_t d_commands[] = { PUSH, ADD, SUB, MUL, DIV, SQRT, COS, SIN, IN, OUT, HLT};
-    

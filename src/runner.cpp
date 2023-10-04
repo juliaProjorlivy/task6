@@ -1,84 +1,89 @@
-#include "commands.h"
 #include "verror.h"
-#include <stdio.h>
+#include "runner.h"
 
-void compare_with_commands(command_t command)
+typedef enum
 {
-    command_t d_commands[] = { PUSH, ADD, SUB, MUL, DIV, SQRT, COS, SIN, IN, OUT, HLT};
+    DONT_END,
+    END_OUT,
+    END_HLT,
+}end_calculations_t;
+
+static const int capacity = 20;
+
+static end_calculations_t compare_with_commands(command_t command, FILE *file, struct stack *stk, elem_t *res)
+{
+    end_calculations_t return_value = DONT_END;
+
     switch (command)
     {
     case PUSH:
-        elem_t variable = 0;
-        int valid_read = fscanf(file, ELEM_PRINT_SPEC, &variable);
+        push(stk, file);
         break;
     case ADD:
-        elem_t arg_1 = stack_pop(stk);
-        elem_t arg_2 = stack_pop(stk);
-        stack_push(stk, arg2 + arg1);
+        add(stk);
         break;
     case SUB:
-        elem_t arg_1 = stack_pop(stk);
-        elem_t arg_2 = stack_pop(stk);
-        stack_push(stk, arg2 - arg1);
+        sub(stk);
         break;
     case MUL:
-        elem_t arg_1 = stack_pop(stk);
-        elem_t arg_2 = stack_pop(stk);
-        stack_push(stk, arg2 * arg1);
+        mul(stk);
         break;
     case DIV:
-        elem_t arg_1 = stack_pop(stk);
-        elem_t arg_2 = stack_pop(stk);
-        if(arg1 != 0)
-        {
-            stack_push(stk, arg2 / arg1);
-        }
-        else
-        {
-
-        }
+        div(stk);
         break;
     case SQRT:
-        elem_t arg = stack_pop(stk);
-        stack_push(stk, sqrt(arg));
+        sqroot(stk);
         break;
     case COS:
-        
+        cosine(stk);
+        break;
+    case SIN:
+        sinus(stk);
+        break;
+    case IN:
+        in(stk, file);
+        break;
+    case OUT:
+        *res = out(stk);
+        return_value = END_OUT;
+        break;
+    case HLT:
+        hlt(stk);
+        return_value = END_HLT;
+        break;
     default:
+        VERROR("unexpected command");
         break;
     }
+
+    return return_value;
 }
 
-int assembler(const char *file_name)
+elem_t calculate(const char *file_name)
 {
     FILE *file = fopen(file_name, "r");
     if(file == NULL)
     {
-        VERROR("file ",file_name, " cannot be opened");
-        return 1;
+        VERROR("failed to open", file_name);
     }
+
+    struct stack stk = {};
+    STACK_CTOR(&stk, capacity);
 
     command_t command = NOT_COMMAND;
-    size_t valid_file = fscanf(file, "%d", &command);
-    while(valid_file != EOF)
-    {
-        switch (command)
-        {
-        case PUSH:
-            
-            break;
-        
-        default:
-            break;
-        }
-        if(command == PUSH || command == IN)
-        {
+    elem_t res = 0;
 
-        }
-        valid_file = fscanf(file, "%d", &command);
+    int is_correctly_read = fscanf(file, "%d", &command);
+    while(is_correctly_read != EOF)
+    {
+        end_calculations_t end_type = compare_with_commands(command, file, &stk, &res);
+        if(end_type == END_HLT) break;
+        else if(end_type == END_OUT) break;
+        is_correctly_read = fscanf(file, "%d", &command);
     }
 
+    fclose(file);
+    return res;
 }
-
 
 
