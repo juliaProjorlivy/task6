@@ -85,7 +85,7 @@ int convert_file(const char *file_name, const char *bc_file_name)
 
 int main()
 {
-    convert_file("/home/julia/task6/src/to_calculate.txt", "/home/julia/task6/src/to_calculate_bc.txt");
+    convert_file("to_calculate.txt", "to_calculate_bc.txt");
     return 0;
 }
 
