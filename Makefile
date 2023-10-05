@@ -8,7 +8,7 @@ SRCS_DASM = src/disassembler/disassembler.cpp
 
 OBJ = build/verror.o
 OBJ_ASM = $(patsubst %.cpp, build/assembler/%.o, $(subst src/assembler/, , $(SRCS_ASM))) 
-OBJ_VM = $(patsubst %.cpp, build/runner/%.o, $(subst src/runner/, , $(SRCS_VM))) 
+OBJ_VM = $(patsubst %.cpp, build/runner/%.o, $(subst src/runner/, , $(SRCS_VM))) lib/stack/lib/libStack.a
 OBJ_DASM = $(patsubst %.cpp, build/disassembler/%.o, $(subst src/disassembler/, , $(SRCS_DASM))) 
 
 EXECUTABLE_ASM = assembler
@@ -37,7 +37,7 @@ build/assembler/%.o: src/assembler/%.cpp
 	mkdir -p ./build/assembler
 	@$(CXX) $(CXX_FLAGS) -c -o $@ $<
 
-build/runner/%.o: src/runner/%.cpp
+build/runner/%.o: src/runner/%.cpp lib/stack/lib/libStack.a
 	mkdir -p ./build/runner
 	@$(CXX) $(CXX_FLAGS) -c -o $@ $<
 
@@ -58,6 +58,8 @@ clean_vm:
 	@rm -f build/runner/*.o
 clean_dasm:
 	@rm -f build/disassembler/*.o
+clean_stk:
+	@rm -f lib/stack/lib/libStack.a
 
 mem_dasm:
 	valgrind --leak-check=full --leak-resolution=med ./$(EXECUTABLE_DASM)

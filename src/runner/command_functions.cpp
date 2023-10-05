@@ -73,7 +73,7 @@ void div(struct stack *stk)
     stack_pop(stk, &arg_1);
     stack_pop(stk, &arg_2);
 
-    if(is_equal(arg_1, 0))
+    if(!is_equal(arg_1, 0))
     {
         stack_push(stk, arg_2 / arg_1);
     }

@@ -3,6 +3,7 @@
 
 #include "stack_func.h"
 #include "commands.h"
+#include "stack_error.h"
 
 void hlt(struct stack *stk);
 
@@ -27,6 +28,5 @@ void cosine(struct stack *stk);
 elem_t out(struct stack *stk);
 
 elem_t calculate(const char *file_name);
-// elem_t compare_with_commands(command_t command, FILE *file, struct stack *stk);
 
 #endif

@@ -64,7 +64,8 @@ elem_t calculate(const char *file_name)
     FILE *file = fopen(file_name, "r");
     if(file == NULL)
     {
-        VERROR("failed to open", file_name);
+        VERROR_FOPEN(file_name);
+        return 1;
     }
 
     struct stack stk = {};
@@ -77,13 +78,18 @@ elem_t calculate(const char *file_name)
     while(is_correctly_read != EOF)
     {
         end_calculations_t end_type = compare_with_commands(command, file, &stk, &res);
+        STACK_ERROR(&stk, stack_errno);
         if(end_type == END_HLT) break;
         else if(end_type == END_OUT) break;
         is_correctly_read = fscanf(file, "%d", &command);
     }
 
-    fclose(file);
+    close_file(file, file_name);
     return res;
 }
 
-
+int main()
+{
+    printf(ELEM_PRINT_SPEC "\n", calculate("to_calculate_bc.txt"));
+    return 0;
+}
