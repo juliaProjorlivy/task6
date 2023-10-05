@@ -1,9 +1,7 @@
-#include "verror.h"
 #include "assembler.h"
+#include "commands.h"
+#include "verror.h"
 #include <stdlib.h>
-#include <string.h>
-#include <errno.h>
-
 
 command_t d_commands[] = { PUSH, ADD, SUB, MUL, DIV, SQRT, COS, SIN, IN, OUT, HLT};
 const char *str_commands[] = {"push", "add", "sub", "mul", "div", "sqrt", "cos", "sin", "in", "out", "hlt"};
@@ -28,15 +26,15 @@ int convert_file(const char *file_name, const char *bc_file_name)
     FILE *file = fopen(file_name, "r");  // open file to conver it to binary-code file
     if(file == NULL)
     {
-        VERROR("file %s %s %s", file_name, "cannot be opened:", strerror(errno));
+        VERROR_FOPEN(file_name);
         return 1;
     }
 
     FILE *bc_file = fopen(bc_file_name, "w");
     if(bc_file == NULL)
     {
-        VERROR("file %s %s", bc_file_name, "cannot be opened");
-        fclose(file);
+        VERROR_FOPEN(bc_file_name);
+        close_file(file, file_name);
         return 1;
     }
 
@@ -49,9 +47,10 @@ int convert_file(const char *file_name, const char *bc_file_name)
 
         if(fprintf(bc_file, "%d", command) < 0)
         {
-            VERROR("failed to fill the %s %s", bc_file_name, "file");
-            fclose(file);
-            fclose(bc_file);
+            VERROR_FILL_FILE(bc_file_name);
+            close_file(file, file_name);
+            close_file(bc_file, bc_file_name);
+            free(data_commands);
             return 1;
         }
 
@@ -61,24 +60,27 @@ int convert_file(const char *file_name, const char *bc_file_name)
 
             if(fprintf(bc_file, " %d", x) < 0)
             {
-                VERROR("faild ot fill the %s %s", bc_file_name, "file");
-                fclose(file);
-                fclose(bc_file);
+                VERROR_FILL_FILE(bc_file_name);
+                close_file(file, file_name);
+                close_file(bc_file, bc_file_name);
+                free(data_commands);
                 return 1;
             }
         }
 
         if(fprintf(bc_file, "\n") < 0)
         {
-            VERROR("faild to fill the %s %s", bc_file_name, "file");
-            fclose(file);
-            fclose(bc_file);
+            VERROR_FILL_FILE(bc_file_name);
+            close_file(file, file_name);
+            close_file(bc_file, bc_file_name);
+            free(data_commands);
             return 1;
         }
     }
 
-    fclose(file);
-    fclose(bc_file);
+    close_file(file, file_name);
+    close_file(bc_file, bc_file_name);
+    free(data_commands);
 
     return 0;
 }
