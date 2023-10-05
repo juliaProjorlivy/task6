@@ -9,7 +9,7 @@ void hlt(struct stack *stk);
 
 void push(struct stack *stk, FILE *file);
 
-void in(struct stack *stk, FILE *file);
+void in(struct stack *stk);
 
 void add(struct stack *stk);
 

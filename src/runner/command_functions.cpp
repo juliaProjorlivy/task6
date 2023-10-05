@@ -30,10 +30,10 @@ void push(struct stack *stk, FILE *file)
     stack_push(stk, arg);
 }
 
-void in(struct stack *stk, FILE *file)
+void in(struct stack *stk)
 {
     elem_t arg = 0;
-    int is_correctly_read = fscanf(file, ELEM_PRINT_SPEC, &arg);
+    int is_correctly_read = fscanf(stdin, ELEM_PRINT_SPEC, &arg);
 
     if(!is_correctly_read)
     {
