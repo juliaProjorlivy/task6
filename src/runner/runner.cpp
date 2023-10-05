@@ -78,7 +78,6 @@ elem_t calculate(const char *file_name)
     while(is_correctly_read != EOF)
     {
         end_calculations_t end_type = compare_with_commands(command, file, &stk, &res);
-        STACK_ERROR(&stk, stack_errno);
         if(end_type == END_HLT) break;
         else if(end_type == END_OUT) break;
         is_correctly_read = fscanf(file, "%d", &command);

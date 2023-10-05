@@ -21,8 +21,8 @@ assembler: $(OBJ_ASM) $(OBJ)
 	@echo "CXX $(EXECUTABLE_ASM)"
 	@$(CXX) $(CXX_FLAGS) -lasan $(OBJ_ASM) $(OBJ) -o $(EXECUTABLE_ASM)
 
-runner: $(OBJ_VM) $(OBJ)
-	@echo "CXX $(EXECUTABLE_ASM)"
+runner: $(OBJ_VM) $(OBJ) 
+	@echo "CXX $(EXECUTABLE_VM)"
 	@$(CXX) $(CXX_FLAGS) -lasan $(OBJ_VM) $(OBJ) -o $(EXECUTABLE_VM)
 
 disassembler: $(OBJ_DASM) $(OBJ)
@@ -37,7 +37,7 @@ build/assembler/%.o: src/assembler/%.cpp
 	mkdir -p ./build/assembler
 	@$(CXX) $(CXX_FLAGS) -c -o $@ $<
 
-build/runner/%.o: src/runner/%.cpp lib/stack/lib/libStack.a
+build/runner/%.o: src/runner/%.cpp 
 	mkdir -p ./build/runner
 	@$(CXX) $(CXX_FLAGS) -c -o $@ $<
 
@@ -46,7 +46,7 @@ build/disassembler/%.o: src/disassembler/%.cpp
 	@$(CXX) $(CXX_FLAGS) -c -o $@ $<
 
 lib/stack/lib/libStack.a:
-	make -C lib/stack/
+	make lib -C lib/stack/
 
 .PHONY: clean mem
 
