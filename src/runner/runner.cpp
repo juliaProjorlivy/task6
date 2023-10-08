@@ -3,13 +3,13 @@
 
 typedef enum
 {
-    DONT_END,
-    END_HLT,
-}whether_to_end;
+    CONTINUE,
+    END,
+}status;
 
 static const int capacity = 20;
 
-static whether_to_end compare_with_commands(command_t command, FILE *file, struct stack *stk, elem_t *res)
+static status compare_with_commands(command_t command, FILE *file, struct stack *stk)
 {
     switch (command)
     {
@@ -41,45 +41,50 @@ static whether_to_end compare_with_commands(command_t command, FILE *file, struc
         in(stk);
         break;
     case OUT:
-        *res = out(stk);
+        out(stk);
         break;
     case HLT:
         hlt(stk);
-        return END_HLT;
+        return END;
         break;
     default:
         VERROR("unexpected command");
         break;
     }
 
-    return DONT_END;
+    return CONTINUE;
 }
 
-elem_t calculate(const char *file_name)
+
+
+int calculate(const char *file_name)
 {
     FILE *file = fopen(file_name, "r");
     if(file == NULL)
     {
         VERROR_FOPEN(file_name);
         return 1;
-    }
+    } 
 
     struct stack stk = {};
     STACK_CTOR(&stk, capacity);
 
+    // struct runner spu = {};
+    // spu.stk = stk;
+    // spu.code = 
+
     command_t command = NOT_COMMAND;
-    elem_t res = 0;
 
     int is_correctly_read = fscanf(file, "%d", &command);
     while(is_correctly_read != EOF)
     {
-        whether_to_end end = compare_with_commands(command, file, &stk, &res);
-        if(end == END_HLT) break;
+        status end = compare_with_commands(command, file, &stk);
+        if(end == END) break;
         is_correctly_read = fscanf(file, "%d", &command);
     }
 
     close_file(file, file_name);
-    return res;
+    return 0;
 }
 
 int main()
@@ -87,3 +92,7 @@ int main()
     printf(ELEM_PRINT_SPEC "\n", calculate("to_calculate_bc.txt"));
     return 0;
 }
+
+
+
+

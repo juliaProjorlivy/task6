@@ -19,15 +19,23 @@ void hlt(struct stack *stk)
 
 void push(struct stack *stk, FILE *file)
 {
+    second_param second_command = FIRST_COM;
     elem_t arg = 0;
-    int is_correctly_read = fscanf(file, ELEM_PRINT_SPEC, &arg);
 
+    int is_correctly_read = fscanf(file, "%d", &second_command);
     if(!is_correctly_read)
     {
         VERROR("troubles reading the file");
     }
 
-    stack_push(stk, arg);
+    is_correctly_read = fscanf(file, ELEM_PRINT_SPEC, &arg);
+    if(!is_correctly_read)
+    {
+        VERROR("troubles reading the file");
+    }
+
+    if(second_command == FIRST_COM) stack_push(stk, arg);
+    /////////else 
 }
 
 void in(struct stack *stk)
@@ -114,10 +122,10 @@ void cosine(struct stack *stk)
     stack_push(stk, cos(arg));
 }
 
-elem_t out(struct stack *stk)
+void out(struct stack *stk)
 {
     elem_t arg = 0;
     stack_pop(stk, &arg);
 
-    return arg;
+    printf(ELEM_PRINT_SPEC, arg);
 }

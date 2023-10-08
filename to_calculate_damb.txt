@@ -1,7 +1,6 @@
 push 100
 push 200
-sub
+add
 push 500
-div
-out
-hlt
+mul
+in 11

@@ -4,20 +4,15 @@
 #include <string.h>
 #include <stdlib.h>
 
-command_t d_commands[] = { PUSH, ADD, SUB, MUL, DIV, SQRT, COS, SIN, IN, OUT, HLT};
-char *str_commands[] = {"push", "add", "sub", "mul", "div", "sqrt", "cos", "sin", "in", "out", "hlt"};
-size_t n_commands = sizeof(str_commands)/sizeof(const char *);
-const int max_lenght = 10;
-
-static int digit_to_str(command_t command, char **data_command)
+static int digit_to_str(command_t command, const char **data_command)
 {
     for(size_t i = 0; i < n_commands; i++)
     {
         if(command == d_commands[i])
         {
-            printf("str_commads = %s\n", str_commands[i]);
+            // printf("str_commads = %s\n", str_commands[i]);
             *data_command = str_commands[i];
-            printf("str_data_commads = %s\n", *data_command);
+            // printf("str_data_commads = %s\n", *data_command);
             return 0;
         }
     }
@@ -28,7 +23,7 @@ static int digit_to_str(command_t command, char **data_command)
 
 int convert_binary_file(const char *bc_file_name, const char *file_name)
 {
-    FILE *bc_file = fopen(bc_file_name, "r");  // open file to conver it to binary-code file
+    FILE *bc_file = fopen(bc_file_name, "rt");  // open file to conver it to binary-code file
     if(bc_file == NULL)
     {
         VERROR_FOPEN(bc_file_name);
@@ -57,8 +52,8 @@ int convert_binary_file(const char *bc_file_name, const char *file_name)
 
     while(fscanf(bc_file, "%d", &command) != EOF)
     {
-        digit_to_str(command, data_command);
-        printf("data_command = %s\n", *data_command);
+        digit_to_str(command, (const char **)data_command);
+        // printf("data_command = %s\n", *data_command);
 
         if(fprintf(file, "%s", *data_command) < 0)
         {
