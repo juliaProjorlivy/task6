@@ -4,8 +4,7 @@
 int main()
 {
     size_t data_size = 0;
-    get_data_from_file("to_calculate.txt", &data_size);
-    assembler()
+    struct codes *cds = write_file("to_calculate.txt", "to_calculate_bc.txt");
     return 0;
 }
 

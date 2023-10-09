@@ -1,7 +1,7 @@
-1 100
-1 200
-3
-1 500
-5
-10
-11
+push 100
+push 200
+sub
+push 500
+div
+out
+hlt
