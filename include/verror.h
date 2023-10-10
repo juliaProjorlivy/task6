@@ -32,7 +32,12 @@ void verror(const char* format, ...);
     {                                                                               \
        VERROR("file %s %s %s", (file_name), "cannot be closed:", strerror(errno));  \
     } while (0)  
-    
+
+#define VERROR_FWRITE(file_name) do                         \
+    {                                                       \
+       VERROR("troubles filling the file %s", (file_name)); \
+    } while (0)
+
 void close_file(FILE *file, const char *file_name);
                                                     
 #endif

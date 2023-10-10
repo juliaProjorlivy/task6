@@ -4,47 +4,46 @@
 #include <stdio.h>
 #include "stack_func.h"
 
-typedef enum // enum for second parametr in push, pop, in, out functions
+typedef enum
 {
-    STACK,
-    REGISTER_A,
-    REGISTER_B,
-    REGISTER_C,
-    REGISTER_D,
-}most_bit;
+    STACK = 0,
+    REGISTER_A = 1,
+    REGISTER_B = 2,
+    REGISTER_C = 3,
+    REGISTER_D = 4,
+} has_reg; // TODO: rename
 
 typedef enum
 {
     NOT_COMMAND = 0,
     PUSH = 1,
-    POP,
-    ADD,
-    SUB,
-    MUL,
-    DIV,
-    SQRT,
-    COS,
-    SIN,
-    IN,
-    OUT,
-    HLT,
-}command_t;
+    POP = 2, // TODO: enumerate =
+    ADD = 3,
+    SUB = 4,
+    MUL = 5,
+    DIV = 6,
+    SQRT = 7,
+    COS = 8,
+    SIN = 9,
+    IN = 10,
+    OUT = 11,
+    HLT = 12,
+} command_t;
 
 struct codes
 {
-    unsigned char most : 4;
-    unsigned char least : 4;
-    unsigned char have_arg : 1;
     elem_t arg;
+    unsigned char reg : 2;
+    unsigned char op : 5; // operation
+    unsigned char has_arg : 1;
 };
 
-// most_bit d_most_bit[] = {STACK, REGISTER_A, REGISTER_B, REGISTER_C, REGISTER_D};
-// const char *str_registers[] = {"rax", "rbx", "rcx", "rdx"};
-// size_t n_registers = sizeof(str_registers)/sizeof(const char *);
+static const char *str_registers[] = {"rax", "rbx", "rcx", "rdx"};
+static size_t n_registers = sizeof(str_registers)/sizeof(str_registers[0]);
 
-// command_t d_commands[] = {PUSH, POP, ADD, SUB, MUL, DIV, SQRT, COS, SIN, IN, OUT, HLT};
-// const char *str_commands[] = {"push", "pop", "add", "sub", "mul", "div", "sqrt", "cos", "sin", "in", "out", "hlt"};
-// size_t n_commands = sizeof(str_commands)/sizeof(const char *);
-// const int max_length = 10;
+static const char *str_commands[] = {"push", "pop", "add", "sub", "mul", "div",
+                                    "sqrt", "cos", "sin", "in", "out", "hlt"};
+static size_t n_commands = sizeof(str_commands)/sizeof(str_commands[0]);
+static const int max_length = 10;
 
 #endif

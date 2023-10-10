@@ -14,6 +14,7 @@ struct spu
                 //isnide different types of arguments(elem_t for stack value and int for codes)
     char *ip;
     int *registers;
+    struct {
     int rax;
     int rbx;
     int rcx;

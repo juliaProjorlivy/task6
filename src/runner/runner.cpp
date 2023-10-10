@@ -59,7 +59,7 @@ static status compare_with_commands(command_t command, FILE *file, struct stack 
 
 int calculate(const char *file_name)
 {
-    FILE *file = fopen(file_name, "r");
+    FILE *file = fopen(file_name, "rb");
     if(file == NULL)
     {
         VERROR_FOPEN(file_name);
@@ -75,7 +75,7 @@ int calculate(const char *file_name)
 
     command_t command = NOT_COMMAND;
 
-    int is_correctly_read = fscanf(file, "%d", &command);
+    int is_correctly_read = fscanf(file, "%d", &command); // TODO: fread
     while(is_correctly_read != EOF)
     {
         status end = compare_with_commands(command, file, &stk);
