@@ -1,20 +1,16 @@
-#include "verror.h"
+#include "commands.h"
 #include "runner.h"
+#include "verror.h"
 
-typedef enum
-{
-    CONTINUE,
-    END,
-}status;
-
-static const int capacity = 20;
-
-static status compare_with_commands(command_t command, FILE *file, struct stack *stk)
+status compare_with_commands(command_t command, struct stack *stk, elem_t *reg, elem_t arg)
 {
     switch (command)
     {
     case PUSH:
-        push(stk, file);
+        push(stk, reg, arg);
+        break;
+    case POP:
+        pop(stk, reg);
         break;
     case ADD:
         add(stk);
@@ -46,53 +42,31 @@ static status compare_with_commands(command_t command, FILE *file, struct stack 
     case HLT:
         hlt(stk);
         return END;
-        break;
     default:
-        VERROR("unexpected command");
-        break;
+        VERROR("unexpected command %s", command);
+        return END;
     }
 
     return CONTINUE;
 }
 
-
-
-int calculate(const char *file_name)
+int runner(struct spu *proc) // maybe copy and not ptr
 {
-    FILE *file = fopen(file_name, "rb");
-    if(file == NULL)
+    for(size_t i_code = 0; i_code < proc->n_codes; i_code++)
     {
-        VERROR_FOPEN(file_name);
-        return 1;
-    } 
+        elem_t *reg = NULL;
+        elem_t arg = proc->all_codes[i_code].arg;
 
-    struct stack stk = {};
-    STACK_CTOR(&stk, capacity);
+        if(proc->all_codes[i_code].reg > 0) // if has no arguments
+        {
+            reg = &(proc->registers.arr_regs[proc->all_codes[i_code].reg - 1]);
+        }
+        struct stack *stk = proc->stk;
 
-    // struct runner spu = {};
-    // spu.stk = stk;
-    // spu.code = 
-
-    command_t command = NOT_COMMAND;
-
-    int is_correctly_read = fscanf(file, "%d", &command); // TODO: fread
-    while(is_correctly_read != EOF)
-    {
-        status end = compare_with_commands(command, file, &stk);
-        if(end == END) break;
-        is_correctly_read = fscanf(file, "%d", &command);
+        if(compare_with_commands((command_t)proc->all_codes[i_code].op, stk, reg, arg) == END)
+        {
+            return 0;
+        }
     }
-
-    close_file(file, file_name);
     return 0;
 }
-
-int main()
-{
-    printf(ELEM_PRINT_SPEC "\n", calculate("to_calculate_bc.txt"));
-    return 0;
-}
-
-
-
-

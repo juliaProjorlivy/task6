@@ -2,30 +2,46 @@
 #define COMMAND_FUNC_H
 
 #include "stack_func.h"
-#include "commands.h"
-#include "stack_error.h"
-#include <limits.h>
 
 struct spu
 {
     struct stack *stk;
-    size_t code_size;
-    char *code; // using char to calculate everything in bytes. 
-                //isnide different types of arguments(elem_t for stack value and int for codes)
-    char *ip;
-    int *registers;
-    struct {
-    int rax;
-    int rbx;
-    int rcx;
-    int rdx;
+    size_t n_codes;
+    struct codes *all_codes;    // an arr of structures for each command
+    struct codes *ip;                   // a ptr to the particular command in all_codes
+
+    union
+    {
+        struct
+        {
+            elem_t rax;
+            elem_t rbx;
+            elem_t rcx;
+            elem_t rdx;    
+        } regs;
+
+        elem_t *arr_regs;
+
+    } registers;
 };
 
-const char code_poison = CHAR_MAX;
+typedef enum
+{
+    CONTINUE = 0,
+    END = 1,
+} status;
+
+// status compare_with_commands(command_t command, struct spu *proc);
+
+status compare_with_commands(command_t command, struct stack *stk, elem_t *reg, elem_t arg);
+
+int runner(struct spu *proc);
 
 void hlt(struct stack *stk);
 
-void push(struct stack *stk, FILE *file);
+void pop(struct stack *stk, elem_t *reg);
+
+void push(struct stack *stk, elem_t *reg, elem_t arg);
 
 void in(struct stack *stk);
 
@@ -44,7 +60,5 @@ void sinus(struct stack *stk);
 void cosine(struct stack *stk);
 
 void out(struct stack *stk);
-
-int calculate(const char *file_name);
 
 #endif

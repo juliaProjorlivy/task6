@@ -1,3 +1,4 @@
+#include "commands.h"
 #include "verror.h"
 #include "runner.h"
 #include <math.h>
@@ -17,31 +18,26 @@ void hlt(struct stack *stk)
     stack_dtor(stk);
 }
 
-void push(struct stack *stk, FILE *file)
+void pop(struct stack *stk, elem_t *reg)
 {
-    second_param second_command = FIRST_COM;
     elem_t arg = 0;
+    stack_pop(stk, &arg);
+    *reg = arg;
+}
 
-    int is_correctly_read = fscanf(file, "%d", &second_command);
-    if(!is_correctly_read)
+void push(struct stack *stk, elem_t *reg, elem_t arg)
+{
+    if(reg != NULL)
     {
-        VERROR("troubles reading the file");
+        arg = *reg;
     }
-
-    is_correctly_read = fscanf(file, ELEM_PRINT_SPEC, &arg);
-    if(!is_correctly_read)
-    {
-        VERROR("troubles reading the file");
-    }
-
-    if(second_command == FIRST_COM) stack_push(stk, arg);
-    /////////else 
+    stack_push(stk, arg);
 }
 
 void in(struct stack *stk)
 {
     elem_t arg = 0;
-    int is_correctly_read = fscanf(stdin, ELEM_PRINT_SPEC, &arg);
+    int is_correctly_read = scanf(ELEM_PRINT_SPEC, &arg);
 
     if(!is_correctly_read)
     {
@@ -127,5 +123,5 @@ void out(struct stack *stk)
     elem_t arg = 0;
     stack_pop(stk, &arg);
 
-    printf(ELEM_PRINT_SPEC, arg);
+    printf(ELEM_PRINT_SPEC "\n", arg);
 }

@@ -1,34 +1,27 @@
+#include "commands.h"
+#include <stdio.h>
 #include "spu_ctor_dtor.h"
-#include "stack_func.h"
 #include "runner.h"
 #include <stdlib.h>
-#include <limits.h>
 
-const int capacity = 20;
+const int capacity = 5;
 
-
-void spu_ctor(struct spu *proc, size_t code_size)
+void spu_ctor(struct spu *proc, struct codes *all_codes, size_t n_codes)
 {
-    struct stack stk = {};
-    STACK_CTOR(&stk, capacity);
+    // struct stack stk = {};
+    struct stack *stk = (struct stack *)calloc(sizeof(stack), 1);
+    STACK_CTOR(stk, capacity);
 
-    proc->stk = &stk;
-    proc->code = (char *)calloc(sizeof(char), code_size);
-    for(size_t i = 0; i < code_size; i++)
-    {
-        *(proc->code + i) = code_poison; /// every bity fills with posion 
-    }
-    proc->code_size = code_size;
-    char *ip = proc->code;
-    
+    proc->stk = stk;
+    proc->n_codes = n_codes;
+    proc->all_codes = all_codes;
+    proc->ip = proc->all_codes;
+    proc->registers.arr_regs = (elem_t *)calloc(sizeof(elem_t), n_registers); 
 }
 
 void spu_dtor(struct spu *proc)
 {
-    for(size_t i = 0; i < proc->code_size; i++)
-    {
-        *(proc->code + i) = code_poison;
-    }
-
-    free(proc->code);
+    free(proc->registers.arr_regs);
+    free(proc->stk);
+    free(proc->all_codes);
 }

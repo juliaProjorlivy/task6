@@ -10,7 +10,7 @@ static int is_register(struct codes *code, char *str_register)
     {
         if(!strcmp(str_register, str_registers[reg_i]))
         {
-            code->reg = (unsigned char)reg_i; 
+            code->reg = (unsigned char)(reg_i + 1); 
             return 1;
         }
     }
@@ -24,7 +24,7 @@ static int is_command(struct codes *code, char *str_command)
     {
         if(!strcmp(str_command, str_commands[com_i]))
         {
-            code->op = (unsigned char)com_i;
+            code->op = (unsigned char)(com_i + 1);
             return 1;
         }
     }
@@ -44,7 +44,7 @@ static int is_push(struct codes *code, const char *line)
         VERROR("troubles reading the line");
         return 0;
     } 
-    if(!strcmp(str_register, str_commands[code->op]))
+    if(!strcmp(str_register, str_commands[code->op - 1]))
     {
         VERROR("no needed argument");
         return 0;
@@ -73,7 +73,7 @@ static int is_pop(struct codes *code, const char *line)
         VERROR("troubles reading the line");
         return 0;
     }
-    if(!strcmp(str_register, str_commands[code->op]))
+    if(!strcmp(str_register, str_commands[code->op - 1]))
     {
         VERROR("no needed argument");
         return 0;

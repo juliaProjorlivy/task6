@@ -39,7 +39,7 @@ struct codes
 };
 
 static const char *str_registers[] = {"rax", "rbx", "rcx", "rdx"};
-static size_t n_registers = sizeof(str_registers)/sizeof(str_registers[0]);
+static const size_t n_registers = sizeof(str_registers)/sizeof(str_registers[0]);
 
 static const char *str_commands[] = {"push", "pop", "add", "sub", "mul", "div",
                                     "sqrt", "cos", "sin", "in", "out", "hlt"};

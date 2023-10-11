@@ -3,5 +3,7 @@ push 200
 sub
 push 500
 div
+push 200
+mul
 out
 hlt
