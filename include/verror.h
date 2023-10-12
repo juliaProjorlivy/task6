@@ -8,6 +8,8 @@
 
 void verror(const char* format, ...);
 
+int close_file(FILE *file, const char *file_name);
+
 #define RED           "\x1b[31;1m"
 #define END_OF_RED "\n\x1b[39;49m\n" 
 
@@ -37,7 +39,5 @@ void verror(const char* format, ...);
     {                                                       \
        VERROR("troubles filling the file %s", (file_name)); \
     } while (0)
-
-void close_file(FILE *file, const char *file_name);
                                                     
 #endif

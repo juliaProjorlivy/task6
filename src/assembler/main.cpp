@@ -14,10 +14,6 @@ int main()
     write_file("to_calculate_bc.txt", commands, str_count);
 
     free(data);
-    // for(size_t i = 0; i < str_count; i++)
-    // {
-    //     free(lines[i]);
-    // }
     free(lines);
     free(commands);
     return 0;

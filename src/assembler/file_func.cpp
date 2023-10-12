@@ -112,47 +112,6 @@ int write_file(const char *file_name, struct codes *all_codes, size_t n_com)
         return 1;
     }
 
-    // size_t n_obj = 1;
-    // unsigned char new_reg = 0;
-    // unsigned char new_op = 0;
-    // unsigned char new_has_arg = 0;
-
-    // for(size_t i_com = 0; i_com < n_com; i_com++)
-    // {
-    //     //adds operations
-    //     new_op = all_codes[i_com].op;
-    //     if(fwrite(&new_op, sizeof(new_op), n_obj, file) < n_obj)
-    //     {
-    //         VERROR_FWRITE(file_name);
-    //         return 1;
-    //     }
-
-    //     //adds registers
-    //     new_reg = all_codes[i_com].reg;
-    //     if(fwrite(&new_reg, sizeof(new_reg), n_obj, file) < n_obj)
-    //     {
-    //         VERROR_FWRITE(file_name);
-    //         return 1;
-    //     }
-
-    //     //adds argumets
-    //     if(fwrite(&(all_codes[i_com].arg), sizeof(elem_t), n_obj, file) < n_obj)
-    //     {
-    //         VERROR_FWRITE(file_name);
-    //         return 1;
-    //     }
-
-    //     //adds has_arg
-    //     new_has_arg = all_codes[i_com].has_arg;
-    //     if(fwrite(&new_has_arg, sizeof(new_has_arg), n_obj, file) < n_obj)
-    //     {
-    //         VERROR_FWRITE(file_name);
-    //         return 1;
-    //     }
-        
-    // }
-
     close_file(file, file_name);
-
     return 0;
 }

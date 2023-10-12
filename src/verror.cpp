@@ -8,10 +8,13 @@ void verror(const char* format, ...)
     va_end(args);
 }
 
-void close_file(FILE *file, const char *file_name)
+int close_file(FILE *file, const char *file_name)
 {
     if(fclose(file) == EOF)
     {
         VERROR_FCLOSE(file_name);
+        return 1;
     }
+
+    return 0;
 }
