@@ -14,5 +14,5 @@ to compile : make disassembler
 to clean : make clean_dasm
 to start the program : ./diassasembler
 to check valgrind : make mem_dasm
-# verror
-to clean : make clean
+
+make clean to clean everything

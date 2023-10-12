@@ -51,7 +51,7 @@ lib/stack/lib/libStack.a:
 .PHONY: clean mem
 
 clean:
-	@rm -f build/*.o
+	@rm -f build/*.o -f build/assembler/*.o -f build/runner/*.o -f build/disassembler/*.o
 clean_asm:
 	@rm -f build/assembler/*.o
 clean_vm:

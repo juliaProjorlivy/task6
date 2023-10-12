@@ -42,6 +42,9 @@ status compare_with_commands(command_t command, struct stack *stk, elem_t *reg, 
     case HLT:
         hlt(stk);
         return END;
+    case NOT_COMMAND:
+        VERROR("no such command as %s", command);
+        return END;
     default:
         VERROR("unexpected command %s", command);
         return END;

@@ -11,7 +11,7 @@ static int is_register(struct codes *code, char *str_register)
     {
         if(!strcmp(str_register, str_registers[reg_i]))
         {
-            code->reg = (unsigned char)(reg_i + 1); 
+            code->reg = (unsigned char)(reg_i + 1) & 0x3; 
             return 1;
         }
     }
@@ -25,7 +25,7 @@ static int is_command(struct codes *code, char *str_command)
     {
         if(!strcmp(str_command, str_commands[com_i]))
         {
-            code->op = (unsigned char)(com_i + 1);
+            code->op = (unsigned char)(com_i + 1) & 0x5;
             return 1;
         }
     }
