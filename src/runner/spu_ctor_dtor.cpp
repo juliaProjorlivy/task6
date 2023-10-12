@@ -7,7 +7,6 @@ const int capacity = 5;
 
 void spu_ctor(struct spu *proc, struct codes *all_codes, size_t n_codes)
 {
-    // struct stack stk = {};
     struct stack *stk = (struct stack *)calloc(sizeof(stack), 1);
     STACK_CTOR(stk, capacity);
 

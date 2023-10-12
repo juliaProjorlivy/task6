@@ -88,7 +88,7 @@ static int is_pop(struct codes *code, const char *line)
     return 1;
 }
 
-int mini_assembler(const char *line, struct codes *command)  // convert line into the struct codes
+int asm_for_single_line(const char *line, struct codes *command)  // convert line into the struct codes
 {
     char str_command[max_length] = {}; //free! TODO: static!
     int len_com = 0;
@@ -131,9 +131,9 @@ struct codes *assembler(char **lines, size_t n_lines)
 
     for(size_t line_i = 0; line_i < n_lines; line_i++)
     {
-        if(mini_assembler(lines[line_i], all_codes + line_i))
+        if(asm_for_single_line(lines[line_i], all_codes + line_i))
         {
-            VERROR("some troubles with mini_assembler");
+            VERROR("some troubles with asm_for_single_line");
             free(all_codes);
             return NULL;
         }

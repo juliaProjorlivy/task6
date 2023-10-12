@@ -29,7 +29,7 @@ const char *is_command(struct codes *code)
     return NULL;
 }
 
-char *mini_disasm(struct codes *code)
+char *dasm_for_single_code(struct codes *code)
 {
     const char *str_command = is_command(code);
     if(str_command == NULL)
@@ -104,7 +104,7 @@ char **disasm(struct codes *all_codes, size_t n_codes)
 
     for(size_t i_code = 0; i_code < n_codes; i_code++)
     {
-        lines[i_code] = mini_disasm(all_codes + i_code);
+        lines[i_code] = dasm_for_single_code(all_codes + i_code);
 
         if(lines[i_code] == NULL)
         {
