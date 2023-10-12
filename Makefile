@@ -4,7 +4,7 @@ CXX_FLAGS = -I include -I lib/stack/include -D _DEBUG -ggdb3 -std=c++17 -O0 -Wal
 SRCS = src/verror.cpp
 SRCS_ASM = src/assembler/assembler.cpp src/assembler/file_func.cpp src/assembler/main.cpp
 SRCS_VM = src/runner/runner.cpp src/runner/command_functions.cpp src/runner/spu_ctor_dtor.cpp src/runner/spu_dump.cpp src/runner/main.cpp src/runner/file_func_runner.cpp
-SRCS_DASM = src/disassembler/disassembler.cpp src/disassembler/flie_func_dasm.cpp src/disassembler/main.cpp
+SRCS_DASM = src/disassembler/disassembler.cpp src/disassembler/file_func_dasm.cpp src/disassembler/main.cpp
 
 OBJ = build/verror.o
 OBJ_ASM = $(patsubst %.cpp, build/assembler/%.o, $(subst src/assembler/, , $(SRCS_ASM))) 

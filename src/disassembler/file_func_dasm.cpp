@@ -1,31 +1,26 @@
-#include "commands.h"
 #include "file_func_dasm.h"
+#include "commands.h"
 #include "verror.h"
 #include <stdlib.h>
 
-int write_file_dasm(const char *file_name, const char **lines, size_t n_lines)
+int write_file_dasm(const char *file_name, char **lines, size_t n_lines)
 {
-    FILE *file = fopen(file_name, "w");
+    FILE *file = fopen(file_name, "wt");
     if(file == NULL)
     {
         VERROR_FOPEN(file_name);
         return 1;
     }
-    if(fwrite(&n_lines, sizeof(n_lines), 1, file) < 1)
+    for(size_t i_line = 0; i_line < n_lines; i_line++)
     {
-        close_file(file, file_name);
-        VERROR_FWRITE(file_name);
-        return 1;
-    }
-    if(fwrite(lines, sizeof(*lines), n_lines, file) < n_lines)
-    {
-        close_file(file, file_name);
-        VERROR_FWRITE(file_name);
-        return 1;
+        if(fprintf(file, "%s", lines[i_line]) <= 0)
+        {
+            VERROR_FWRITE(file_name);
+            return 1;
+        }
     }
 
-    close_file(file, file_name);
-    return 0;
+    return close_file(file, file_name);
 }
 
 struct codes *get_ptrs_from_file(const char *file_name, size_t *n_com) // the same as in file_func_runner.cpp maybe make only onle func_file?

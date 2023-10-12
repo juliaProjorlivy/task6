@@ -5,5 +5,9 @@ push 500
 div
 push 200
 mul
+push 40
+pop rcx
+push rcx
+div
 out
 hlt

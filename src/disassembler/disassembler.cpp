@@ -29,7 +29,7 @@ const char *is_command(struct codes *code)
     return NULL;
 }
 
-const char *mini_disasm(struct codes *code)
+char *mini_disasm(struct codes *code)
 {
     const char *str_command = is_command(code);
     if(str_command == NULL)
@@ -38,7 +38,8 @@ const char *mini_disasm(struct codes *code)
         return NULL;
     }
 
-    char *line = (char *)calloc(sizeof(char), max_length);
+    char *line = (char *)calloc(sizeof(char), max_length); //free
+    char *initial_line = line; // ptr on the beginning of the line
     if(line == NULL)
     {
         VERROR("memory allocation failure");
@@ -63,21 +64,23 @@ const char *mini_disasm(struct codes *code)
             return NULL;
         }
 
-        if(sprintf(line, "%s", str_register) <= 0)
+        if(sprintf(line, "%s%n", str_register, &com_len) <= 0)
         {
             VERROR("failed to fill the line");
             return NULL;
         }
+        line += com_len;
     }
 
     else if(code->has_arg)
     {
-        if(sprintf(line, ELEM_PRINT_SPEC, code->arg) <= 0)
+        if(sprintf(line, ELEM_PRINT_SPEC "%n", code->arg, &com_len) <= 0)
         {
             VERROR("failed to fill the line");
             free(line);
             return NULL;
         }
+        line += com_len;
     }
 
     if(sprintf(line, "\n") <= 0)
@@ -87,12 +90,12 @@ const char *mini_disasm(struct codes *code)
         return NULL;
     }
 
-    return (const char *)line;
+    return initial_line;
 }
 
-const char **disasm(struct codes *all_codes, size_t n_codes)
+char **disasm(struct codes *all_codes, size_t n_codes)
 {
-    const char **lines = (const char **)calloc(sizeof(const char *), n_codes);
+    char **lines = (char **)calloc(sizeof(const char *), n_codes);
     if(lines == NULL)
     {
         VERROR("memory allocation failure");

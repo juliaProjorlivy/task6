@@ -8,7 +8,7 @@ struct spu
     struct stack *stk;
     size_t n_codes;
     struct codes *all_codes;    // an arr of structures for each command
-    struct codes *ip;                   // a ptr to the particular command in all_codes
+    struct codes *ip;           // a ptr to the particular command in all_codes
 
     union
     {
@@ -30,8 +30,6 @@ typedef enum
     CONTINUE = 0,
     END = 1,
 } status;
-
-// status compare_with_commands(command_t command, struct spu *proc);
 
 status compare_with_commands(command_t command, struct stack *stk, elem_t *reg, elem_t arg);
 

@@ -2,7 +2,6 @@
 #define FILE_FUNC_H
 
 #include <stdio.h>
-// #include <commands.h>
 
 char **make_ptr_array(char *data, size_t *str_count);
 
