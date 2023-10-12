@@ -1,5 +1,4 @@
 #include "commands.h"
-#include <stdio.h>
 #include "spu_ctor_dtor.h"
 #include "runner.h"
 #include <stdlib.h>

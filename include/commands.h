@@ -38,9 +38,11 @@ struct codes
     unsigned char has_arg : 1;
 };
 
+static has_reg d_registers[] = {REGISTER_A, REGISTER_B, REGISTER_C, REGISTER_D};
 static const char *str_registers[] = {"rax", "rbx", "rcx", "rdx"};
 static const size_t n_registers = sizeof(str_registers)/sizeof(str_registers[0]);
 
+static command_t d_commands[] = {PUSH, POP, ADD, SUB, MUL, DIV, SQRT, COS, SIN, IN, OUT, HLT};
 static const char *str_commands[] = {"push", "pop", "add", "sub", "mul", "div",
                                     "sqrt", "cos", "sin", "in", "out", "hlt"};
 static size_t n_commands = sizeof(str_commands)/sizeof(str_commands[0]);

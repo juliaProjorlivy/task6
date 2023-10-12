@@ -3,6 +3,7 @@
 #include "verror.h"
 #include <stdlib.h>
 #include <ctype.h>
+#include <strings.h>
 
 static int is_register(struct codes *code, char *str_register)
 {
@@ -90,8 +91,9 @@ static int is_pop(struct codes *code, const char *line)
 int mini_assembler(const char *line, struct codes *command)  // convert line into the struct codes
 {
     char str_command[max_length] = {}; //free! TODO: static!
+    int len_com = 0;
 
-    if(sscanf(line, "%s", str_command) == EOF)
+    if(sscanf(line, "%s%n", str_command, &len_com) == EOF)
     {
         VERROR("troubles reading the line");
         return 1;
@@ -103,7 +105,7 @@ int mini_assembler(const char *line, struct codes *command)  // convert line int
         return 1;
     }
 
-    line += strlen(str_command) + 1;
+    line += len_com + 1;
     if(command->op == PUSH)
     {
         if(!is_push(command, line)) // if not then there is some error
