@@ -59,12 +59,18 @@ int runner(struct spu *proc) // maybe copy and not ptr
     {
         elem_t *reg = NULL;
         elem_t arg = proc->all_codes[i_code].arg;
+        proc->ip++;
 
-        if(proc->all_codes[i_code].reg > 0) // if has no arguments
+        if(proc->all_codes[i_code].reg > 0) // if has registers
         {
             reg = &(proc->registers.arr_regs[proc->all_codes[i_code].reg - 1]);
+            proc->ip++;
         }
         struct stack *stk = proc->stk;
+        if(proc->all_codes[i_code].has_arg)
+        {
+            proc->ip++;
+        }
 
         if(compare_with_commands((command_t)proc->all_codes[i_code].op, stk, reg, arg) == END)
         {

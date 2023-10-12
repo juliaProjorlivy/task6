@@ -11,6 +11,7 @@ int main()
     struct codes *all_codes = get_ptrs_from_file("byte_code.bin", &n_codes);
     spu_ctor(&proc, all_codes, n_codes);
     runner(&proc);
+    SPU_DUMP(&proc);
     spu_dtor(&proc);
     return 0;
 }

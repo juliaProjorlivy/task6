@@ -44,7 +44,7 @@ char **make_ptr_array(char *data, size_t *str_count) // returns the number of st
 
     const size_t max_str_count = 200;
 
-    char **ptr_data = (char **)calloc(sizeof(char **), max_str_count);
+    char **ptr_data = (char **)calloc(sizeof(char *), max_str_count);
     *str_count = split_line(data, ptr_data);
     ptr_data = (char **)realloc(ptr_data, ((*str_count) + 1) * sizeof(char*));
 

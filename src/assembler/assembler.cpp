@@ -11,7 +11,7 @@ static int is_register(struct codes *code, char *str_register)
     {
         if(!strcmp(str_register, str_registers[reg_i]))
         {
-            code->reg = (unsigned char )(reg_i + 1) & (0x2 | 3); 
+            code->reg = (unsigned char )(reg_i + 1) & REG_MASK; 
             return 1;
         }
     }
@@ -25,7 +25,7 @@ static int is_command(struct codes *code, char *str_command)
     {
         if(!strcmp(str_command, str_commands[com_i]))
         {
-            code->op = (unsigned char)(com_i + 1) & (0x5 | 31);
+            code->op = (unsigned char)(com_i + 1) & OP_MASK;
             return 1;
         }
     }
@@ -46,7 +46,7 @@ static int is_push(struct codes *code, const char *line)
 
     if(!is_register(code, str_register)) // if it's not a string then it's a digit, fills code->reg inside is_register function
     {
-        if(sscanf(line, ELEM_PRINT_SPEC, &arg) == EOF)
+        if(sscanf(line, ELEM_PRINT_SPEC, &arg) <= 0)
         {
             VERROR("incorrect argument is given for push");
             return 0;
@@ -83,7 +83,7 @@ int asm_for_single_line(const char *line, struct codes *command)  // convert lin
     char str_command[max_length] = {}; //free! TODO: static!
     int len_com = 0;
 
-    if(sscanf(line, "%s%n", str_command, &len_com) == EOF)
+    if(sscanf(line, "%s%n", str_command, &len_com) <= 0)
     {
         VERROR("troubles reading the line");
         return 1;

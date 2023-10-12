@@ -12,6 +12,7 @@ void spu_ctor(struct spu *proc, struct codes *all_codes, size_t n_codes)
 
     proc->stk = stk;
     proc->n_codes = n_codes;
+    proc->ip = 0;
     proc->all_codes = all_codes;
     proc->registers.arr_regs = (elem_t *)calloc(sizeof(elem_t), n_registers); 
 }

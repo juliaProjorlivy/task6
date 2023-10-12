@@ -3,28 +3,53 @@
 #include "runner.h"
 #include "verror.h"
 
+#define GREEN "\033[92m"
+#define END_OF_GREEN "\x1b[39;49m"
+
 void spu_dump(struct spu *proc, const char *file, int line, const char *func, const char *arg)
 {
     fprintf(stderr, RED "file %s(%d) in %s\n", file, line, func);
     fprintf(stderr, "SPU %s", arg);
     fprintf(stderr, END_OF_RED "{\n");
-    for(size_t i = 0; i < proc->n_codes * 2; i++)
-    {
-        fprintf(stderr, "\t%2zu ", i);
-    }
-    fprintf(stderr, "\n");
 
-    for(size_t i_code = 0; i_code < proc->n_codes; i_code++)
+    size_t i_com = 0, i_code = 0; 
+    proc->ip = 5;
+    for(; i_code < proc->n_codes; i_code++)
     {
-        fprintf(stderr, "\t%2d", proc->all_codes[i_code].op);
+        fprintf(stderr, "%2zu\t", i_com);
+        fprintf(stderr, "%2d", proc->all_codes[i_code].op);
+        if(proc->ip == i_com)
+        {
+            fprintf(stderr, GREEN "\t <-" END_OF_GREEN);
+        }
+        fprintf(stderr, "\n");
+
         if(proc->all_codes[i_code].reg > 0)
         {
-            fprintf(stderr, "\t%2d ", proc->all_codes[i_code].reg);
+            i_com++;
+            fprintf(stderr, "%2zu\t", i_com);
+            fprintf(stderr, "%2d", proc->all_codes[i_code].reg);
+            if(proc->ip == i_com)
+            {
+                fprintf(stderr, GREEN "\t <-" END_OF_GREEN);
+            }
+            fprintf(stderr, "\n");
         }
+        
         else if(proc->all_codes[i_code].has_arg)
         {
-            fprintf(stderr, "\t%2d", (int)proc->all_codes[i_code].arg);
+            i_com++;
+            fprintf(stderr, "%2zu\t", i_com);
+            fprintf(stderr, "%2d", (int)proc->all_codes[i_code].arg);
+            if(proc->ip == i_com)
+            {
+                fprintf(stderr, GREEN "\t <-" END_OF_GREEN);
+            }
+            fprintf(stderr, "\n");
         }
+        
+        i_com++;
     }
+   
     fprintf(stderr, "}\n");
 }

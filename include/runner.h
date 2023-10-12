@@ -8,7 +8,8 @@ struct spu
     struct stack *stk;
     size_t n_codes;
     struct codes *all_codes;    // an arr of structures for each command
-
+    size_t ip;
+    
     union
     {
         struct

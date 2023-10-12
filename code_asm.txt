@@ -10,6 +10,7 @@ mul
 push 40
 pop rcx
 push rcx
+sin
 div
 out
 hlt
