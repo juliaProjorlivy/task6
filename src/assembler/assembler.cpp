@@ -11,7 +11,7 @@ static int is_register(struct codes *code, char *str_register)
     {
         if(!strcmp(str_register, str_registers[reg_i]))
         {
-            code->reg = (unsigned char)(reg_i + 1) & 0x3; 
+            code->reg = (unsigned char )(reg_i + 1); 
             return 1;
         }
     }
@@ -25,7 +25,7 @@ static int is_command(struct codes *code, char *str_command)
     {
         if(!strcmp(str_command, str_commands[com_i]))
         {
-            code->op = (unsigned char)(com_i + 1) & 0x5;
+            code->op = (unsigned char)(com_i + 1);
             return 1;
         }
     }
@@ -38,23 +38,17 @@ static int is_push(struct codes *code, const char *line)
     char str_register[max_length] = {};
     elem_t arg = 0;
 
-    // TODO: split into two if's
-    // TODO: use %n
     if(sscanf(line, "%s", str_register) == EOF)
     {
-        VERROR("troubles reading the line");
+        VERROR("no needed argument is given for push");
         return 0;
     } 
-    if(!strcmp(str_register, str_commands[code->op - 1]))
-    {
-        VERROR("no needed argument");
-        return 0;
-    }
+
     if(!is_register(code, str_register)) // if it's not a string then it's a digit, fills code->reg inside is_register function
     {
         if(sscanf(line, ELEM_PRINT_SPEC, &arg) == EOF)
         {
-            VERROR("cannot read the line");
+            VERROR("incorrect argument is given for push");
             return 0;
         }
 
@@ -71,17 +65,13 @@ static int is_pop(struct codes *code, const char *line)
 
     if(sscanf(line, "%s", str_register) == EOF)
     {
-        VERROR("troubles reading the line");
+        VERROR("no needed argument is given for pop");
         return 0;
     }
-    if(!strcmp(str_register, str_commands[code->op - 1]))
-    {
-        VERROR("no needed argument");
-        return 0;
-    }
+
     if(!is_register(code, str_register)) // it shouldn't be anything but register. fills code->reg inside is_register function
     {
-        VERROR("invalid argument %s", str_register);
+        VERROR("incorrect argument is given to pop %s", str_register);
         return 0;
     }
 

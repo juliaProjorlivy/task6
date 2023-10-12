@@ -51,13 +51,13 @@ lib/stack/lib/libStack.a:
 .PHONY: clean mem
 
 clean:
-	@rm -f build/*.o -f build/assembler/*.o -f build/runner/*.o -f build/disassembler/*.o
+	@rm -f build/*.o -f build/assembler/*.o -f build/runner/*.o -f build/disassembler/*.o -f assembler -f runner -f disassembler
 clean_asm:
-	@rm -f build/assembler/*.o
+	@rm -f build/assembler/*.o -f assembler
 clean_vm:
-	@rm -f build/runner/*.o
+	@rm -f build/runner/*.o -f runner
 clean_dasm:
-	@rm -f build/disassembler/*.o
+	@rm -f build/disassembler/*.o -f disassembler
 clean_stk:
 	@rm -f lib/stack/lib/libStack.a
 

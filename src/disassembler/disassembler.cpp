@@ -39,12 +39,12 @@ char *dasm_for_single_code(struct codes *code)
     }
 
     char *line = (char *)calloc(sizeof(char), max_length); //free
-    char *initial_line = line; // ptr on the beginning of the line
     if(line == NULL)
     {
         VERROR("memory allocation failure");
         return NULL;
     }
+    char *initial_line = line; // ptr on the beginning of the line
 
     int com_len = 0;
     if(sprintf(line, "%s %n", str_command, &com_len) <= 0)

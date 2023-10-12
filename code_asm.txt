@@ -1,6 +1,8 @@
 push 100
 push 200
 sub
+push 100
+mul
 push 500
 div
 push 200
