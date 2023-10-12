@@ -1,7 +1,9 @@
 # task6
 # Assembler
-to compile : make assembler
-to clean : make clean_asm
+**to compile** 
+```make assembler```
+**to clean** 
+```make clean_asm```
 to start the program : ./assembler
 to check valgrind : make mem_asm
 # Runner
