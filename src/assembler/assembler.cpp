@@ -5,7 +5,7 @@
 #include <ctype.h>
 #include <strings.h>
 
-static int is_register(struct codes *code, char *str_register)
+int is_register(struct codes *code, char *str_register)
 {
     for(size_t reg_i = 0; reg_i < n_registers; reg_i++) // if it is one of registers:
     {
@@ -33,7 +33,7 @@ static int is_command(struct codes *code, char *str_command)
     return 0;
 }
 
-static int is_push(struct codes *code, const char *line)
+int push_has_arg(struct codes *code, const char *line)
 {
     char str_register[max_length] = {};
     elem_t arg = 0;
@@ -59,9 +59,9 @@ static int is_push(struct codes *code, const char *line)
     return 1;
 }
 
-static int is_pop(struct codes *code, const char *line)
+int pop_has_arg(struct codes *code, const char *line)
 {
-    char str_register[max_length] = {}; // memory for register string
+    char str_register[max_length] = {};
 
     if(sscanf(line, "%s", str_register) == EOF)
     {
@@ -98,14 +98,14 @@ int asm_for_single_line(const char *line, struct codes *command)  // convert lin
     line += len_com + 1;
     if(command->op == PUSH)
     {
-        if(!is_push(command, line)) // if not then there is some error
+        if(!push_has_arg(command, line)) // if not then there is some error
         {
             return 1;
         }
     }
     else if(command->op == POP) // if not then there is some error
     {
-        if(!is_pop(command, line))
+        if(!pop_has_arg(command, line))
         {
             return 1;
         }

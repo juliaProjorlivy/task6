@@ -2,7 +2,7 @@
 #include "runner.h"
 #include "verror.h"
 
-status compare_with_commands(command_t command, struct stack *stk, elem_t *reg, elem_t arg)
+status compare_with_commands(command_t command, struct stack *stk, elem_t *reg, elem_t arg, size_t *ip)
 {
     switch (command)
     {
@@ -42,6 +42,9 @@ status compare_with_commands(command_t command, struct stack *stk, elem_t *reg, 
     case HLT:
         hlt(stk);
         return END;
+    // case JMP(ip):
+    //     jmp(ip);
+    //     break;
     case NOT_COMMAND:
         VERROR("no such command as %s", command);
         return END;
@@ -53,27 +56,33 @@ status compare_with_commands(command_t command, struct stack *stk, elem_t *reg, 
     return CONTINUE;
 }
 
-int runner(struct spu *proc) // maybe copy and not ptr
+int runner(struct spu *proc)
 {
-    for(size_t i_code = 0; i_code < proc->n_codes; i_code++)
+    proc->cur_pos = 0;
+    proc->ip_code = 0;
+    // size_t i_code = proc->ip_code;
+    for(; proc->ip_code < proc->n_codes; proc->ip_code++ && proc->cur_pos++)
     {
         elem_t *reg = NULL;
-        elem_t arg = proc->all_codes[i_code].arg;
-        proc->ip++;
+        elem_t arg = proc->all_codes[proc->ip_code].arg;
+        // proc->cur_pos += (proc->cur_pos) ? 1 : 0;
+        // proc->ip_code += (proc->ip_code) ? 1 : 0;
 
-        if(proc->all_codes[i_code].reg > 0) // if has registers
+        if(proc->all_codes[proc->ip_code].reg > 0) // if has registers
         {
-            reg = &(proc->registers.arr_regs[proc->all_codes[i_code].reg - 1]);
-            proc->ip++;
+            reg = &(proc->registers.arr_regs[proc->all_codes[proc->ip_code].reg - 1]);
+            proc->cur_pos++;
         }
+        else if(proc->all_codes[proc->ip_code].has_arg)
+        {
+            proc->cur_pos++;
+        }
+
         struct stack *stk = proc->stk;
-        if(proc->all_codes[i_code].has_arg)
+        if(compare_with_commands((command_t)proc->all_codes[proc->ip_code].op, stk, reg, arg, &(proc->ip_code)) == END)
         {
-            proc->ip++;
-        }
-
-        if(compare_with_commands((command_t)proc->all_codes[i_code].op, stk, reg, arg) == END)
-        {
+            proc->ip_code++;
+            proc->cur_pos++;
             return 0;
         }
     }

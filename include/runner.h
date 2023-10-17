@@ -6,10 +6,11 @@
 struct spu
 {
     struct stack *stk;
-    size_t n_codes;
+    size_t n_codes; // number of commands in arr all_codes
     struct codes *all_codes;    // an arr of structures for each command
-    size_t ip;
-    
+    size_t ip_code;
+    size_t cur_pos;
+
     union
     {
         struct

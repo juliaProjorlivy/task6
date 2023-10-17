@@ -3,6 +3,16 @@
 #include "runner.h"
 #include <math.h>
 #include <assert.h>
+
+// #define MAKE_F_JUMP(sign, stk, ip_code, new_ip_code)                       \
+//         elem_t arg_1 = 0;                                      \
+//         elem_t arg_2 = 0;                           \
+//         stack_pop((stk), (&arg_1));                 \
+//         stack_pop((stk), (&arg_2));                 \
+//         if((arg_1) (#sign) (arg_2))                           \
+//         {                                           \
+//             jmp((ip_code), (new_ip_code));                        \
+//         }                                           \
     
 static int is_equal(elem_t x, elem_t y, double epsilon = 1e-9)
 {
@@ -11,6 +21,88 @@ static int is_equal(elem_t x, elem_t y, double epsilon = 1e-9)
     assert (isfinite (epsilon));
 
     return (fabs (x - y) < epsilon);
+}
+
+void jmp(size_t *ip_code, size_t new_ip_code)
+{
+    *ip_code = new_ip_code; 
+}
+
+// void ja(struct stack *stk,  size_t *ip_code, size_t new_ip_code)
+// {
+//     MAKE_F_JUMP(<, stk, ip_code, new_ip_code);
+// }
+
+void ja(struct stack *stk,  size_t *ip_code, size_t new_ip_code)
+{
+    elem_t arg_1 = 0;
+    elem_t arg_2 = 0;
+    stack_pop(stk, &arg_1);
+    stack_pop(stk, &arg_2);
+    if(arg_1 < arg_2)
+    {
+        jmp(ip_code, new_ip_code);
+    }
+}
+
+void jae(struct stack *stk, size_t *ip_code, size_t new_ip_code)
+{
+    elem_t arg_1 = 0;
+    elem_t arg_2 = 0;
+    stack_pop(stk, &arg_1);
+    stack_pop(stk, &arg_2);
+    if(arg_1 <= arg_2)
+    {
+        jmp(ip_code, new_ip_code);
+    }
+}
+
+void jb(struct stack *stk, size_t *ip_code, size_t new_ip_code)
+{
+    elem_t arg_1 = 0;
+    elem_t arg_2 = 0;
+    stack_pop(stk, &arg_1);
+    stack_pop(stk, &arg_2);
+    if(arg_1 > arg_2)
+    {
+        jmp(ip_code, new_ip_code);
+    }
+}
+
+void jbe(struct stack *stk, size_t *ip_code, size_t new_ip_code)
+{
+    elem_t arg_1 = 0;
+    elem_t arg_2 = 0;
+    stack_pop(stk, &arg_1);
+    stack_pop(stk, &arg_2);
+    if(arg_1 >= arg_2)
+    {
+        jmp(ip_code, new_ip_code);
+    }
+}
+
+void jne(struct stack *stk, size_t *ip_code, size_t new_ip_code)
+{
+    elem_t arg_1 = 0;
+    elem_t arg_2 = 0;
+    stack_pop(stk, &arg_1);
+    stack_pop(stk, &arg_2);
+    if(arg_1 != arg_2)
+    {
+        jmp(ip_code, new_ip_code);
+    }
+}
+
+void je(struct stack *stk, size_t *ip_code, size_t new_ip_code)
+{
+    elem_t arg_1 = 0;
+    elem_t arg_2 = 0;
+    stack_pop(stk, &arg_1);
+    stack_pop(stk, &arg_2);
+    if(arg_1 == arg_2)
+    {
+        jmp(ip_code, new_ip_code);
+    }
 }
 
 void hlt(struct stack *stk)
@@ -125,3 +217,4 @@ void out(struct stack *stk)
 
     printf(ELEM_PRINT_SPEC "\n", arg);
 }
+

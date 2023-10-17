@@ -13,12 +13,15 @@ void spu_dump(struct spu *proc, const char *file, int line, const char *func, co
     fprintf(stderr, END_OF_RED "{\n");
 
     size_t i_com = 0, i_code = 0; 
-    proc->ip = 5;
+    // for(size_t i_pos = 0; i_pos < )
+
+
+    // proc->ip_code = 5;
     for(; i_code < proc->n_codes; i_code++)
     {
         fprintf(stderr, "%2zu\t", i_com);
         fprintf(stderr, "%2d", proc->all_codes[i_code].op);
-        if(proc->ip == i_com)
+        if(proc->cur_pos == i_com)
         {
             fprintf(stderr, GREEN "\t <-" END_OF_GREEN);
         }
@@ -29,7 +32,7 @@ void spu_dump(struct spu *proc, const char *file, int line, const char *func, co
             i_com++;
             fprintf(stderr, "%2zu\t", i_com);
             fprintf(stderr, "%2d", proc->all_codes[i_code].reg);
-            if(proc->ip == i_com)
+            if(proc->cur_pos == i_com)
             {
                 fprintf(stderr, GREEN "\t <-" END_OF_GREEN);
             }
@@ -41,7 +44,7 @@ void spu_dump(struct spu *proc, const char *file, int line, const char *func, co
             i_com++;
             fprintf(stderr, "%2zu\t", i_com);
             fprintf(stderr, "%2d", (int)proc->all_codes[i_code].arg);
-            if(proc->ip == i_com)
+            if(proc->cur_pos == i_com)
             {
                 fprintf(stderr, GREEN "\t <-" END_OF_GREEN);
             }
@@ -52,4 +55,6 @@ void spu_dump(struct spu *proc, const char *file, int line, const char *func, co
     }
    
     fprintf(stderr, "}\n");
+    // printf("ip_code = %zu\n", proc->ip_code);
+    // printf("cur_pos = %zu\n", proc->cur_pos);
 }
