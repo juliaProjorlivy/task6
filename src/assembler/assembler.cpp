@@ -207,13 +207,14 @@ struct codes *assembler(char **lines, size_t n_lines)
 
     for(size_t line_i = 0; line_i < n_lines; line_i++)
     {
-        if(asm_for_single_line(lines[line_i], all_codes + line_i, lables, line_i, &i_in_lables))
+        if(asm_for_single_line(lines[line_i], all_codes + line_i - i_in_lables, lables, line_i, &i_in_lables))
         {
             VERROR("some troubles with asm_for_single_line");
             free(all_codes);
             return NULL;
         }
     }
+    
     for(size_t i = 0; i < n_lables; i++)
     {
         // free(lables[i]->name);
