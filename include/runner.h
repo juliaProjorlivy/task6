@@ -32,7 +32,7 @@ typedef enum
     END = 1,
 } status;
 
-status compare_with_commands(command_t command, struct stack *stk, elem_t *reg, elem_t arg);
+status compare_with_commands(struct spu *proc, elem_t *reg, elem_t arg);
 
 int runner(struct spu *proc);
 
@@ -59,5 +59,22 @@ void sinus(struct stack *stk);
 void cosine(struct stack *stk);
 
 void out(struct stack *stk);
+
+#define DEF_JUMP_F(name) void name(struct spu *proc, size_t arg)
+DEF_JUMP_F(jmp);
+#define MAKE_F_JUMP(sign, proc, arg)                \
+        elem_t arg_1 = 0;                           \
+        elem_t arg_2 = 0;                           \
+        stack_pop((proc->stk), (&arg_1));           \
+        stack_pop((proc->stk), (&arg_2));           \
+        if((arg_1) sign (arg_2))                    \
+        {                                           \
+            jmp((proc), (arg));                     \
+        }   
+DEF_JUMP_F(ja);
+DEF_JUMP_F(j);
+DEF_JUMP_F(jmp);
+DEF_JUMP_F(jmp);
+DEF_JUMP_F(jmp);
 
 #endif

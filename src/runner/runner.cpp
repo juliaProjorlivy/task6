@@ -2,48 +2,50 @@
 #include "runner.h"
 #include "verror.h"
 
-status compare_with_commands(command_t command, struct stack *stk, elem_t *reg, elem_t arg, size_t *ip)
+status compare_with_commands(struct spu *proc, elem_t *reg, elem_t arg)
 {
+    command_t command = (command_t)proc->all_codes[proc->ip_code].op;
+    
     switch (command)
     {
     case PUSH:
-        push(stk, reg, arg);
+        push(proc->stk, reg, arg);
         break;
     case POP:
-        pop(stk, reg);
+        pop(proc->stk, reg);
         break;
     case ADD:
-        add(stk);
+        add(proc->stk);
         break;
     case SUB:
-        sub(stk);
+        sub(proc->stk);
         break;
     case MUL:
-        mul(stk);
+        mul(proc->stk);
         break;
     case DIV:
-        div(stk);
+        div(proc->stk);
         break;
     case SQRT:
-        sqroot(stk);
+        sqroot(proc->stk);
         break;
     case COS:
-        cosine(stk);
+        cosine(proc->stk);
         break;
     case SIN:
-        sinus(stk);
+        sinus(proc->stk);
         break;
     case IN:
-        in(stk);
+        in(proc->stk);
         break;
     case OUT:
-        out(stk);
+        out(proc->stk);
         break;
     case HLT:
-        hlt(stk);
+        hlt(proc->stk);
         return END;
-    // case JMP(ip):
-    //     jmp(ip);
+    // case JMP(&((size_t)arg)):
+    //     jmp(&((size_t)arg));
     //     break;
     case NOT_COMMAND:
         VERROR("no such command as %s", command);
@@ -60,13 +62,11 @@ int runner(struct spu *proc)
 {
     proc->cur_pos = 0;
     proc->ip_code = 0;
-    // size_t i_code = proc->ip_code;
+
     for(; proc->ip_code < proc->n_codes; proc->ip_code++ && proc->cur_pos++)
     {
         elem_t *reg = NULL;
         elem_t arg = proc->all_codes[proc->ip_code].arg;
-        // proc->cur_pos += (proc->cur_pos) ? 1 : 0;
-        // proc->ip_code += (proc->ip_code) ? 1 : 0;
 
         if(proc->all_codes[proc->ip_code].reg > 0) // if has registers
         {
@@ -78,8 +78,7 @@ int runner(struct spu *proc)
             proc->cur_pos++;
         }
 
-        struct stack *stk = proc->stk;
-        if(compare_with_commands((command_t)proc->all_codes[proc->ip_code].op, stk, reg, arg, &(proc->ip_code)) == END)
+        if(compare_with_commands(proc, reg, arg) == END) // put jump arg in arg
         {
             proc->ip_code++;
             proc->cur_pos++;

@@ -2,17 +2,7 @@
 #include "verror.h"
 #include "runner.h"
 #include <math.h>
-#include <assert.h>
-
-// #define MAKE_F_JUMP(sign, stk, ip_code, new_ip_code)                       \
-//         elem_t arg_1 = 0;                                      \
-//         elem_t arg_2 = 0;                           \
-//         stack_pop((stk), (&arg_1));                 \
-//         stack_pop((stk), (&arg_2));                 \
-//         if((arg_1) (#sign) (arg_2))                           \
-//         {                                           \
-//             jmp((ip_code), (new_ip_code));                        \
-//         }                                           \
+#include <assert.h>                                                                  
     
 static int is_equal(elem_t x, elem_t y, double epsilon = 1e-9)
 {
@@ -23,86 +13,46 @@ static int is_equal(elem_t x, elem_t y, double epsilon = 1e-9)
     return (fabs (x - y) < epsilon);
 }
 
-void jmp(size_t *ip_code, size_t new_ip_code)
+void jmp(struct spu *proc, size_t new_ip_code)
 {
-    *ip_code = new_ip_code; 
-}
-
-// void ja(struct stack *stk,  size_t *ip_code, size_t new_ip_code)
-// {
-//     MAKE_F_JUMP(<, stk, ip_code, new_ip_code);
-// }
-
-void ja(struct stack *stk,  size_t *ip_code, size_t new_ip_code)
-{
-    elem_t arg_1 = 0;
-    elem_t arg_2 = 0;
-    stack_pop(stk, &arg_1);
-    stack_pop(stk, &arg_2);
-    if(arg_1 < arg_2)
+    proc->ip_code = new_ip_code; 
+    for(size_t i_code = 0; i_code < new_ip_code; i_code++ && proc->cur_pos++)
     {
-        jmp(ip_code, new_ip_code);
+        if(proc->all_codes[i_code].has_arg || proc->all_codes[i_code].reg)
+        {
+            proc->cur_pos++;
+        }
     }
 }
 
-void jae(struct stack *stk, size_t *ip_code, size_t new_ip_code)
+void ja(struct spu *proc, size_t arg)
 {
-    elem_t arg_1 = 0;
-    elem_t arg_2 = 0;
-    stack_pop(stk, &arg_1);
-    stack_pop(stk, &arg_2);
-    if(arg_1 <= arg_2)
-    {
-        jmp(ip_code, new_ip_code);
-    }
+    MAKE_F_JUMP(>, proc, arg);
 }
 
-void jb(struct stack *stk, size_t *ip_code, size_t new_ip_code)
+void jae(struct spu *proc, size_t arg)
 {
-    elem_t arg_1 = 0;
-    elem_t arg_2 = 0;
-    stack_pop(stk, &arg_1);
-    stack_pop(stk, &arg_2);
-    if(arg_1 > arg_2)
-    {
-        jmp(ip_code, new_ip_code);
-    }
+    MAKE_F_JUMP(>=, proc, arg);
 }
 
-void jbe(struct stack *stk, size_t *ip_code, size_t new_ip_code)
+void jb(struct spu *proc, size_t arg)
 {
-    elem_t arg_1 = 0;
-    elem_t arg_2 = 0;
-    stack_pop(stk, &arg_1);
-    stack_pop(stk, &arg_2);
-    if(arg_1 >= arg_2)
-    {
-        jmp(ip_code, new_ip_code);
-    }
+    MAKE_F_JUMP(<, proc, arg);
 }
 
-void jne(struct stack *stk, size_t *ip_code, size_t new_ip_code)
+void jbe(struct spu *proc, size_t arg)
 {
-    elem_t arg_1 = 0;
-    elem_t arg_2 = 0;
-    stack_pop(stk, &arg_1);
-    stack_pop(stk, &arg_2);
-    if(arg_1 != arg_2)
-    {
-        jmp(ip_code, new_ip_code);
-    }
+    MAKE_F_JUMP(<=, proc, arg);
 }
 
-void je(struct stack *stk, size_t *ip_code, size_t new_ip_code)
+void jne(struct spu *proc, size_t arg)
 {
-    elem_t arg_1 = 0;
-    elem_t arg_2 = 0;
-    stack_pop(stk, &arg_1);
-    stack_pop(stk, &arg_2);
-    if(arg_1 == arg_2)
-    {
-        jmp(ip_code, new_ip_code);
-    }
+    MAKE_F_JUMP(!=, proc, arg);
+}
+
+void je(struct spu *proc, size_t arg)
+{
+    MAKE_F_JUMP(==, proc, arg);
 }
 
 void hlt(struct stack *stk)

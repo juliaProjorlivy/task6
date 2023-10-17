@@ -1,3 +1,5 @@
+push 1
+stop :
 push 100
 push 200
 sub
@@ -12,5 +14,8 @@ pop rcx
 push rcx
 sin
 div
+push 1
+push 1
+jne stop
 out
 hlt

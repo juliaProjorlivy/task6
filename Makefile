@@ -57,6 +57,10 @@ build/disassembler/%.o: src/disassembler/%.cpp
 lib/stack/lib/libStack.a:
 	make lib -C lib/stack/
 
+pre_asm:
+	@echo "CXX pre $(EXECUTABLE_ASM)"
+	@$(CXX) $(CXX_FLAGS) -E -dD -lasan $(SRCS_ASM)
+
 .PHONY: clean mem
 
 clean:
@@ -74,7 +78,7 @@ mem_dasm:
 	valgrind --leak-check=full --leak-resolution=med ./$(EXECUTABLE_DASM)
 
 mem_asm:
-	valgrind --leak-check=full --leak-resolution=med ./$(EXECUTABLE_ASM)
+	valgrind --track-origins=yes --leak-check=full --leak-resolution=med ./$(EXECUTABLE_ASM)
 
 mem_vm:
 	valgrind --leak-check=full --leak-resolution=med ./$(EXECUTABLE_VM)
