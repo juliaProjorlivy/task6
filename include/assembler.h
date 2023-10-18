@@ -9,7 +9,7 @@
 // int asm_for_single_line(const char *line, struct codes *command);
 int asm_for_single_line(const char *line, struct codes *command, struct lable *lables, size_t line_i, size_t *i_in_lables);
 
-struct codes *assembler(char **lines, size_t n_lines);
+struct codes *assembler(char **lines, size_t *n_lines);
 
 int pop_has_arg(struct codes *code, const char *line);
 

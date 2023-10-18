@@ -1,0 +1,20 @@
+push 1.000000
+push 100.000000
+push 200.000000
+sub 
+push 100.000000
+mul 
+push 500.000000
+div 
+push 200.000000
+mul 
+push 40.000000
+pop rcx
+push rcx
+sin 
+div 
+push 1.000000
+push 1.000000
+jne 2.000000
+out 
+hlt 

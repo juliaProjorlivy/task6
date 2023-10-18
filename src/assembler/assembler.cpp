@@ -192,7 +192,7 @@ int asm_for_single_line(const char *line, struct codes *command, struct lable **
 }
 
 //                      arr of ptrs of lines | number of lines
-struct codes *assembler(char **lines, size_t n_lines)
+struct codes *assembler(char **lines, size_t *n_lines)
 {
     struct lable **lables = (struct lable **)calloc(sizeof(lable *), n_lables);
     for(size_t i_lable = 0; i_lable < n_lables; i_lable++)
@@ -203,9 +203,9 @@ struct codes *assembler(char **lines, size_t n_lines)
     }
     size_t i_in_lables = 0;
 
-    struct codes *all_codes = (struct codes *)calloc(sizeof(codes), n_lines);
+    struct codes *all_codes = (struct codes *)calloc(sizeof(codes), *n_lines);
 
-    for(size_t line_i = 0; line_i < n_lines; line_i++)
+    for(size_t line_i = 0; line_i < *n_lines; line_i++)
     {
         if(asm_for_single_line(lines[line_i], all_codes + line_i - i_in_lables, lables, line_i, &i_in_lables))
         {
@@ -221,5 +221,7 @@ struct codes *assembler(char **lines, size_t n_lines)
         free(lables[i]);
     }
     free(lables);
+    
+    *n_lines -= i_in_lables;
     return all_codes;
 }

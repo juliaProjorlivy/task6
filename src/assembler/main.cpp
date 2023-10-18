@@ -11,7 +11,7 @@ int main()
 
     char *data = get_data_from_file("code_asm.txt", &data_size);
     char **lines = make_ptr_array(data, &str_count);
-    struct codes *commands = assembler(lines, str_count);
+    struct codes *commands = assembler(lines, &str_count);
     printf("command2 = %d\n", commands[5].op);
     write_file("byte_code.bin", commands, str_count);
 
