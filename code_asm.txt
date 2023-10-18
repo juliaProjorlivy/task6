@@ -1,8 +1,3 @@
-distance :
-in
-in
-add
-ret
 push 1
 stop :
 push 100
@@ -21,3 +16,8 @@ push rax
 pop rax
 out
 hlt
+distance :
+in
+in
+add
+ret
