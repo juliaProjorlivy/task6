@@ -33,13 +33,14 @@ int is_command(struct codes *code, char *str_command)
     return 0;
 }
 
+// only for commands and not for single lable so need to remove changes in code
 int is_lable(struct codes *code, struct lable **lables, const char *str_command, size_t *n_in_lables)
 {
     for(size_t i_lable = 0; i_lable < *n_in_lables; i_lable++)
     {
         if(!strcmp(lables[i_lable]->name, str_command))
         {
-            code->has_arg++;
+            // code->has_arg++;
             code->arg = (elem_t)(lables[i_lable]->ip);
             return 1;
         }
@@ -111,11 +112,14 @@ int jump_has_arg(struct codes *code, const char *line, struct lable **lables, si
         return 0;
     }
 
+    code->has_arg++;
+
     return 1;
 }
 
 int fill_lables(struct lable **lables, char **lines, size_t n_lines, size_t *i_in_lables)
 {
+    size_t i_code = 0;
     for(size_t i_line = 0; i_line < n_lines; i_line++)
     {
         char line[max_length] = {};
@@ -136,9 +140,11 @@ int fill_lables(struct lable **lables, char **lines, size_t n_lines, size_t *i_i
             char *str_lable = (char *)calloc(sizeof(char), max_length);
             strncpy(str_lable, line, strlen(line));
             lables[*i_in_lables]->name = str_lable;
-            lables[*i_in_lables]->ip = (ssize_t)i_line;
+            lables[*i_in_lables]->ip = (ssize_t)i_code;
             (*i_in_lables)++;
+            i_code--;
         }
+        i_code++;
     }
      
     return 0;
@@ -206,6 +212,16 @@ int asm_for_single_line(const char *line, struct codes *code, struct lable **lab
     return 0;
 }
 
+static void free_lables(struct lable **lables, size_t n_in_lables)
+{
+    for(size_t i = 0; i < n_in_lables; i++)
+    {
+        free(lables[i]->name);
+        free(lables[i]);
+    }
+    free(lables);
+}
+
 //                      arr of ptrs of lines | number of lines
 struct codes *assembler(char **lines, size_t *n_lines)
 {
@@ -227,12 +243,21 @@ struct codes *assembler(char **lines, size_t *n_lines)
     for(size_t i_lable = 0; i_lable < n_lables; i_lable++)
     {
         lables[i_lable] = (struct lable *)calloc(sizeof(lable), 1);
+        if(lables[i_lable] == NULL)
+        {
+            VERROR_MEM;
+            free(all_codes);
+            free_lables(lables, i_lable);
+            return NULL;
+        }
         lables[i_lable]->ip = -1;
     }
     size_t n_in_lables = 0;
 
-    if(!fill_lables(lables, lines, *n_lines, &n_in_lables))
+    if(fill_lables(lables, lines, *n_lines, &n_in_lables))
     {
+        free(all_codes);
+        free_lables(lables, n_lables);
         return NULL;
     }
 
@@ -242,16 +267,12 @@ struct codes *assembler(char **lines, size_t *n_lines)
         {
             VERROR("some troubles with asm_for_single_line");
             free(all_codes);
+            free_lables(lables, n_lables);
             return NULL;
         }
     }
 
-    for(size_t i = 0; i < n_lables; i++)
-    {
-        free(lables[i]->name);
-        free(lables[i]);
-    }
-    free(lables);
+    free_lables(lables, n_lables);
 
     (*n_lines) = i_code;    
     return all_codes;

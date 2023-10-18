@@ -13,6 +13,7 @@ int main()
     char **lines = make_ptr_array(data, &str_count);
 
     struct codes *commands = assembler(lines, &str_count);
+    printf("op = %d arg =  %d, str_count = %d\n", (int)commands[0].op, (int)commands[0].arg, (int)commands[0].has_arg);
     write_file("byte_code.bin", commands, str_count);
 
     free(data);

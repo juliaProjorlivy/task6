@@ -1,9 +1,9 @@
 push 1.000000
-je 6.000000
 pop rax
 push rax
 push 2.000000
 push rax
+je 6.000000
 push 100.000000
 push 200.000000
 sub 
