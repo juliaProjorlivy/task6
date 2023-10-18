@@ -2,7 +2,9 @@
 #include "verror.h"
 #include "runner.h"
 #include <math.h>
-#include <assert.h>                                                                  
+#include <assert.h>    
+
+#define MAKE_FUNC(name, ...) void name(struct spu *proc, ## __VA_ARGS__)
     
 static int is_equal(elem_t x, elem_t y, double epsilon = 1e-9)
 {
@@ -13,11 +15,11 @@ static int is_equal(elem_t x, elem_t y, double epsilon = 1e-9)
     return (fabs (x - y) < epsilon);
 }
 
-void jmp(struct spu *proc, size_t new_ip_code)
+void jmp(struct spu *proc, elem_t new_ip_code)
 {
-    proc->ip_code = new_ip_code; 
-    proc->cur_pos = 1; // 1 to include current code->id some bulshit
-    for(size_t i_code = 0; i_code < new_ip_code; i_code++ && proc->cur_pos++)
+    proc->ip_code = (size_t)new_ip_code; 
+    proc->cur_pos = 0; // 1 to include current code->id some bullshit there was 1
+    for(size_t i_code = 0; i_code < proc->ip_code; i_code++ && proc->cur_pos++)
     {
         if(proc->all_codes[i_code].has_arg || proc->all_codes[i_code].reg)
         {
@@ -28,45 +30,59 @@ void jmp(struct spu *proc, size_t new_ip_code)
     proc->ip_code--;
 }
 
-void ja(struct spu *proc, size_t arg)
+void ja(struct spu *proc, elem_t arg)
 {
     MAKE_F_JUMP(>, proc, arg);
 }
 
-void jae(struct spu *proc, size_t arg)
+void jae(struct spu *proc, elem_t arg)
 {
     MAKE_F_JUMP(>=, proc, arg);
 }
 
-void jb(struct spu *proc, size_t arg)
+void jb(struct spu *proc, elem_t arg)
 {
     MAKE_F_JUMP(<, proc, arg);
 }
 
-void jbe(struct spu *proc, size_t arg)
+void jbe(struct spu *proc, elem_t arg)
 {
     MAKE_F_JUMP(<=, proc, arg);
 }
 
-void jne(struct spu *proc, size_t arg)
+void jne(struct spu *proc, elem_t arg)
 {
     MAKE_F_JUMP(!=, proc, arg);
 }
 
-void je(struct spu *proc, size_t arg)
+void je(struct spu *proc, elem_t arg)
 {
     MAKE_F_JUMP(==, proc, arg);
 }
 
-void hlt(struct stack *stk)
+void call(struct spu *proc, elem_t new_ip_code)
 {
-    stack_dtor(stk);
+    stack_push(proc->address_stk, proc->ip_code + 1);
+    jmp(proc, new_ip_code);
 }
 
-void pop(struct stack *stk, elem_t *reg)
+void ret(struct spu *proc)
+{
+    elem_t new_ip_code = 0;
+    stack_pop(proc->address_stk, &new_ip_code);
+    jmp(proc, (size_t)new_ip_code);
+}
+
+void hlt(struct spu *proc)
+{
+    stack_dtor(proc->stk);
+    stack_dtor(proc->address_stk);
+}
+
+MAKE_FUNC(pop, elem_t *reg)
 {
     elem_t arg = 0;
-    stack_pop(stk, &arg);
+    stack_pop(proc->stk, &arg);
     *reg = arg;
 }
 

@@ -8,7 +8,7 @@
             "name": "(gdb) Launch",
             "type": "cppdbg",
             "request": "launch",
-            "program": "/home/julia/task6/runner",
+            "program": "/home/julia/task6/assembler",
             "args": [],
             "stopAtEntry": false,
             "cwd": "/home/julia/task6",

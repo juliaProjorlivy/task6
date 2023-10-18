@@ -1,4 +1,9 @@
 push 1
+je stop
+pop rax
+push rax
+push 2
+push rax
 stop :
 push 100
 push 200
@@ -6,8 +11,5 @@ sub
 out
 push 1
 add
-pop rax
-push rax
-push 2
-push rax
+out
 hlt

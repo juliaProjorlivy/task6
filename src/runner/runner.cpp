@@ -17,7 +17,7 @@ status compare_with_commands(struct spu *proc, elem_t *reg, elem_t arg)
         push(proc->stk, reg, arg);
         break;
     case POP:
-        pop(proc->stk, reg);
+        pop(proc, reg);
         break;
     case ADD:
         add(proc->stk);
@@ -47,8 +47,14 @@ status compare_with_commands(struct spu *proc, elem_t *reg, elem_t arg)
         out(proc->stk);
         break;
     case HLT:
-        hlt(proc->stk);
+        hlt(proc);
         return END;
+    case CALL:
+        call(proc, arg);
+        break;
+    case RET:
+        ret(proc);
+        break;
     CASE_JUMP(JMP, jmp, proc, arg);
     CASE_JUMP(JA, ja, proc, arg);
     CASE_JUMP(JAE, jae, proc, arg);
@@ -69,8 +75,8 @@ status compare_with_commands(struct spu *proc, elem_t *reg, elem_t arg)
 
 int runner(struct spu *proc)
 {
-    proc->cur_pos = 0;
-    proc->ip_code = 0;
+    // proc->cur_pos = 0;
+    // proc->ip_code = 0;
     
     for(; proc->ip_code < proc->n_codes; proc->ip_code++ && proc->cur_pos++) // here there is a problem with jump it returns ip_code normal but after that string it increases on 1
     {

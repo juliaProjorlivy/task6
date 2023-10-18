@@ -35,6 +35,8 @@ typedef enum
     JBE = 17,
     JNE = 18,
     JE = 19,
+    CALL = 20,
+    RET = 21,
 } command_t;
 
 struct codes
@@ -49,10 +51,10 @@ static has_reg d_registers[] = {REGISTER_A, REGISTER_B, REGISTER_C, REGISTER_D};
 static const char *str_registers[] = {"rax", "rbx", "rcx", "rdx"};
 static const size_t n_registers = sizeof(str_registers)/sizeof(str_registers[0]);
 
-static command_t d_commands[] = {PUSH, POP, ADD, SUB, MUL, DIV, SQRT, COS, SIN, IN, OUT, HLT, JMP, JA, JAE, JB, JBE, JNE, JE};
+static command_t d_commands[] = {PUSH, POP, ADD, SUB, MUL, DIV, SQRT, COS, SIN, IN, OUT, HLT, JMP, JA, JAE, JB, JBE, JNE, JE, CALL, RET};
 static const char *str_commands[] = {"push", "pop", "add", "sub", "mul", "div",
                                     "sqrt", "cos", "sin", "in", "out", "hlt",
-                                    "jmp", "ja", "jae", "jb", "jbe", "jne", "je"};
+                                    "jmp", "ja", "jae", "jb", "jbe", "jne", "je", "call", "ret"};
 static size_t n_commands = sizeof(str_commands)/sizeof(str_commands[0]);
 static const int max_length = 50;
 

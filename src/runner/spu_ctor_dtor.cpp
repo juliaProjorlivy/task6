@@ -10,7 +10,11 @@ void spu_ctor(struct spu *proc, struct codes *all_codes, size_t n_codes)
     struct stack *stk = (struct stack *)calloc(sizeof(stack), 1);
     STACK_CTOR(stk, capacity);
 
+    struct stack *address_stk = (struct stack *)calloc(sizeof(stack), 1);
+    STACK_CTOR(address_stk, capacity);
+
     proc->stk = stk;
+    proc->address_stk = address_stk;
     proc->n_codes = n_codes;
     proc->ip_code = 0;
     proc->cur_pos = 0;

@@ -20,7 +20,8 @@ void spu_dump(struct spu *proc, const char *file, int line, const char *func, co
     for(; i_code < proc->n_codes; i_code++)
     {
         fprintf(stderr, "%2zu\t", i_com);
-        fprintf(stderr, "%2d", proc->all_codes[i_code].op);
+        fprintf(stderr, "%2d\t", proc->all_codes[i_code].op);
+        fprintf(stderr, "%s", str_commands[proc->all_codes[i_code].op - 1]);
         if(proc->cur_pos == i_com)
         {
             fprintf(stderr, GREEN "\t <-" END_OF_GREEN);
