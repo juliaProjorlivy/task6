@@ -71,10 +71,12 @@ DEF_JUMP_F(jmp);
         {                                           \
             jmp((proc), (arg));                     \
         }   
+        
 DEF_JUMP_F(ja);
-DEF_JUMP_F(j);
-DEF_JUMP_F(jmp);
-DEF_JUMP_F(jmp);
-DEF_JUMP_F(jmp);
+DEF_JUMP_F(jae);
+DEF_JUMP_F(jb);
+DEF_JUMP_F(jbe);
+DEF_JUMP_F(jne);
+DEF_JUMP_F(je);
 
 #endif

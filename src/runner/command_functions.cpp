@@ -9,13 +9,14 @@ static int is_equal(elem_t x, elem_t y, double epsilon = 1e-9)
     assert (isfinite (x));
     assert (isfinite (y));
     assert (isfinite (epsilon));
-
+  
     return (fabs (x - y) < epsilon);
 }
 
 void jmp(struct spu *proc, size_t new_ip_code)
 {
     proc->ip_code = new_ip_code; 
+    proc->cur_pos = 1; // 1 to include current code->id some bulshit
     for(size_t i_code = 0; i_code < new_ip_code; i_code++ && proc->cur_pos++)
     {
         if(proc->all_codes[i_code].has_arg || proc->all_codes[i_code].reg)
@@ -23,6 +24,8 @@ void jmp(struct spu *proc, size_t new_ip_code)
             proc->cur_pos++;
         }
     }
+    proc->cur_pos--;
+    proc->ip_code--;
 }
 
 void ja(struct spu *proc, size_t arg)

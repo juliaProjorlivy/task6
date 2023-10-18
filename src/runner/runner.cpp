@@ -2,6 +2,11 @@
 #include "runner.h"
 #include "verror.h"
 
+#define CASE_JUMP(NAME, name, proc, arg)    \
+        case NAME:                          \
+            name((proc), ((size_t)arg));    \
+            break
+
 status compare_with_commands(struct spu *proc, elem_t *reg, elem_t arg)
 {
     command_t command = (command_t)proc->all_codes[proc->ip_code].op;
@@ -44,9 +49,13 @@ status compare_with_commands(struct spu *proc, elem_t *reg, elem_t arg)
     case HLT:
         hlt(proc->stk);
         return END;
-    // case JMP(&((size_t)arg)):
-    //     jmp(&((size_t)arg));
-    //     break;
+    CASE_JUMP(JMP, jmp, proc, arg);
+    CASE_JUMP(JA, ja, proc, arg);
+    CASE_JUMP(JAE, jae, proc, arg);
+    CASE_JUMP(JB, jb, proc, arg);
+    CASE_JUMP(JBE, jbe, proc, arg);
+    CASE_JUMP(JNE, jne, proc, arg);
+    CASE_JUMP(JE, je, proc, arg);
     case NOT_COMMAND:
         VERROR("no such command as %s", command);
         return END;
@@ -62,8 +71,8 @@ int runner(struct spu *proc)
 {
     proc->cur_pos = 0;
     proc->ip_code = 0;
-
-    for(; proc->ip_code < proc->n_codes; proc->ip_code++ && proc->cur_pos++)
+    
+    for(; proc->ip_code < proc->n_codes; proc->ip_code++ && proc->cur_pos++) // here there is a problem with jump it returns ip_code normal but after that string it increases on 1
     {
         elem_t *reg = NULL;
         elem_t arg = proc->all_codes[proc->ip_code].arg;

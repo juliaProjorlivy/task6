@@ -154,7 +154,7 @@ int asm_for_single_line(const char *line, struct codes *command, struct lable **
             char str_lable[max_length] = {};
             strncpy(str_lable, str_command, strlen(str_command));
             lables[*i_in_lables]->name = str_lable;
-            lables[*i_in_lables]->ip = (ssize_t)line_i + 1;
+            lables[*i_in_lables]->ip = (ssize_t)line_i;
             (*i_in_lables)++;
             return 0;
         }

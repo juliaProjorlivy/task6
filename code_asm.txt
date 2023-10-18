@@ -3,19 +3,11 @@ stop :
 push 100
 push 200
 sub
-push 100
-mul
-push 500
-div
-push 200
-mul
-push 40
-pop rcx
-push rcx
-sin
-div
-push 1
-push 1
-jne stop
 out
+push 1
+add
+pop rax
+push rax
+push 2
+push rax
 hlt
