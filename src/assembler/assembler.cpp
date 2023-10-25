@@ -264,12 +264,12 @@ void fill_buf(char *buf, size_t *i_buf, char *arg, size_t size)
 {
     for(size_t i = 0; i < size; i++)
     {
-        (*i_buf)++;
         *(buf + *i_buf) = *(arg + i);
+        (*i_buf)++;
     }
 }
 
-int asm_for_single_line(char *buf, size_t *i_buf, elem_t *arg, const char *line, struct codes *code, struct label *labels, size_t n_filled_labels, size_t *i_code)
+int asm_for_single_line(char *buf, size_t *i_buf, elem_t *arg, const char *line, struct codes *code, struct label *labels, size_t n_filled_labels)
 {
     char str_command[max_length] = {};
     int len_com = 0;
@@ -293,7 +293,6 @@ int asm_for_single_line(char *buf, size_t *i_buf, elem_t *arg, const char *line,
 
     fill_buf(buf, i_buf, (char *)(code), sizeof(codes));
 
-    (*i_code)++;
     line += len_com + 1;
     switch(code->op)
     {
@@ -330,7 +329,7 @@ int asm_for_single_line(char *buf, size_t *i_buf, elem_t *arg, const char *line,
 }
 
 //                      arr of ptrs of lines | number of lines
-struct codes *assembler(char *buf, size_t *i_buf, char **lines, size_t *n_lines)
+int assembler(char *buf, size_t *i_buf, char **lines, size_t *n_lines)
 {
     size_t n_labels = 10;
     size_t n_filled_labels = 0;
@@ -338,33 +337,34 @@ struct codes *assembler(char *buf, size_t *i_buf, char **lines, size_t *n_lines)
     if(labels == NULL)
     {
         VERROR_MEM;
-        return NULL;
+        return 1;
     }
 
     size_t i_code = 0;
-    struct codes *all_codes = (struct codes *)calloc(sizeof(codes), *n_lines);
-    if(all_codes == NULL)
-    {
-        VERROR_MEM;
-        free_labels(labels, n_labels);
-        return NULL;
-    }
+    // struct codes *all_codes = (struct codes *)calloc(sizeof(codes), *n_lines);
+    // if(all_codes == NULL)
+    // {
+    //     VERROR_MEM;
+    //     free_labels(labels, n_labels);
+    //     return NULL;
+    // }
+    struct codes code = {};
 
     elem_t arg = 0;
     for(size_t line_i = 0; line_i < *n_lines; line_i++)
     {
-        if(asm_for_single_line(buf, i_buf, &arg, lines[line_i], all_codes + i_code, labels, n_filled_labels, &i_code))
+        if(asm_for_single_line(buf, i_buf, &arg, lines[line_i], &code, labels, n_filled_labels))
         {
             VERROR("troubles assembling the line \"%s\"", lines[line_i]);
-            free(all_codes);
+            // free(all_codes);
             free_labels(labels, n_labels);
-            return NULL;
+            return 1;
         }
     }
 
     free_labels(labels, n_labels);
 
     (*n_lines) = i_code;    
-    return all_codes;
+    return 0;
 }
  

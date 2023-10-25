@@ -31,9 +31,9 @@ int fill_empty_labels(struct label *labels, size_t i_label, size_t n_labels);
 
 struct label *fill_labels(char **lines, size_t n_lines, size_t *n_labels, size_t *n_filled_labels);
 
-int asm_for_single_line(char *buf, size_t *i_buf, elem_t *arg, const char *line, struct codes *code, struct label *labels, size_t n_filled_labels, size_t *i_code);
+int asm_for_single_line(char *buf, size_t *i_buf, elem_t *arg, const char *line, struct codes *code, struct label *labels, size_t n_filled_labels);
 
-struct codes *assembler(char *buf, size_t *i_buf, char **lines, size_t *n_lines);
+int assembler(char *buf, size_t *i_buf, char **lines, size_t *n_lines);
 
 void free_labels(struct label *labels, size_t n_in_labels);
 

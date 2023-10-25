@@ -21,13 +21,13 @@ int main()
     char *data = get_data_from_file("code_asm.txt", &data_size);
     char **lines = make_ptr_array(data, &str_count);
 
-    struct codes *all_codes = assembler(buf, &i_buf, lines, &str_count);
-    printf("op = %d \n", (int)(all_codes[0].op));
+    assembler(buf, &i_buf, lines, &str_count);
+    // printf("op = %d \n", (int)(all_codes[0].op));
     write_file(buf, "byte_code.bin", str_count, i_buf);
 
     free(data);
     free(lines);
-    free(all_codes);
+    // free(all_codes);
     free(buf);
     return 0;
 }

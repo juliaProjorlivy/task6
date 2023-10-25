@@ -99,6 +99,11 @@ int write_file(char *buf, const char *file_name, size_t n_com, size_t i_buf)
         VERROR_FOPEN(file_name);
         return 1;
     }
+    if(fwrite(&i_buf, sizeof(size_t), 1, file) < 1)
+    {
+        VERROR_FWRITE(file_name);
+        return 1;
+    }
 
     if(fwrite(&n_com, sizeof(size_t), 1, file) < 1)
     {

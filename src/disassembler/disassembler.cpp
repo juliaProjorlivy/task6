@@ -3,13 +3,20 @@
 #include "verror.h"
 #include <stdlib.h>
 
+int has_arg(struct codes *code)
+{
+    command_t com = (command_t)(code->op);
+
+    return ((com == POP && code->to_ram) || (com == PUSH || com == JMP || com == JA || com == JAE || com == JB || com == JBE || com == JE || com == JNE));
+}
+
 const char *is_register(struct codes *code)
 {
     for(size_t reg_i = 0; reg_i < n_registers; reg_i++) // if it is one of registers:
     {
-        if(code->reg == d_registers[reg_i])
+        if(code->reg == registers[reg_i].d)
         {
-            return str_registers[reg_i];
+            return registers[reg_i].str;
         }
     }
 
@@ -18,19 +25,21 @@ const char *is_register(struct codes *code)
 
 const char *is_command(struct codes *code)
 {
-    for(size_t com_i = 0; com_i < n_commands; com_i++)
+    for(size_t com_i = 1; com_i < n_commands; com_i++)
     {
-        if(code->op == d_commands[com_i])
+        if(code->op == commands[com_i].d)
         {
-            return str_commands[com_i];
+            return commands[com_i].str;
         }
     }
 
     return NULL;
 }
 
-char *dasm_for_single_code(struct codes *code)
+char *dasm_for_single_code(char *buf, size_t *i_buf)
 {
+    struct codes *code = (codes *)(buf + *i_buf);
+    *i_buf += sizeof(codes);
     const char *str_command = is_command(code);
     if(str_command == NULL)
     {
@@ -54,7 +63,7 @@ char *dasm_for_single_code(struct codes *code)
         return NULL;
     }
     line += com_len;
-    if(code->reg > 0)
+    if(code->reg)
     {
         const char *str_register = is_register(code);
         if(str_register == NULL)
@@ -63,23 +72,61 @@ char *dasm_for_single_code(struct codes *code)
             free(line);
             return NULL;
         }
+        if(code->to_ram)
+        {
+            line++;
+            if(sprintf(line, "[") <= 0)
+            {
+                VERROR("failed to fill the line");
+                return NULL;
+            }
+        }
 
         if(sprintf(line, "%s%n", str_register, &com_len) <= 0)
         {
             VERROR("failed to fill the line");
             return NULL;
         }
+
+        if(code->to_ram)
+        {
+            line++;
+            if(sprintf(line, "[") <= 0)
+            {
+                VERROR("failed to fill the line");
+                return NULL;
+            }
+        }
         line += com_len;
     }
 
-    else if(code->has_arg)
+    else if(has_arg(code))
     {
-        if(sprintf(line, ELEM_PRINT_SPEC "%n", code->arg, &com_len) <= 0)
+        if(code->to_ram)
+        {
+            line++;
+            if(sprintf(line, "[") <= 0)
+            {
+                VERROR("failed to fill the line");
+                return NULL;
+            }
+        }
+        if(sprintf(line, ELEM_PRINT_SPEC "%n", *((elem_t *)(buf + *i_buf)), &com_len) <= 0)
         {
             VERROR("failed to fill the line");
             free(line);
             return NULL;
         }
+        if(code->to_ram)
+        {
+            line++;
+            if(sprintf(line, "[") <= 0)
+            {
+                VERROR("failed to fill the line");
+                return NULL;
+            }
+        }
+        *i_buf += sizeof(elem_t);
         line += com_len;
     }
 
@@ -93,8 +140,10 @@ char *dasm_for_single_code(struct codes *code)
     return initial_line;
 }
 
-char **disasm(struct codes *all_codes, size_t n_codes)
+char **disasm(char *buf, size_t buf_size, size_t n_codes)
 {
+    size_t i_buf = 0;
+    size_t i_code = 0;
     char **lines = (char **)calloc(sizeof(const char *), n_codes);
     if(lines == NULL)
     {
@@ -102,9 +151,9 @@ char **disasm(struct codes *all_codes, size_t n_codes)
         return NULL;
     }
 
-    for(size_t i_code = 0; i_code < n_codes; i_code++)
+    while(i_buf < buf_size)
     {
-        lines[i_code] = dasm_for_single_code(all_codes + i_code);
+        lines[i_code] = dasm_for_single_code(buf, &i_buf);
 
         if(lines[i_code] == NULL)
         {
@@ -112,6 +161,7 @@ char **disasm(struct codes *all_codes, size_t n_codes)
             free(lines);
             return NULL;
         }
+        i_code++;
     }
 
     return lines;
