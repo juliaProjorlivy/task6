@@ -7,10 +7,10 @@
 int main()
 {
     struct spu proc = {};
-    size_t n_codes = 0;
-    struct codes *all_codes = get_ptrs_from_file("byte_code.bin", &n_codes);
+    size_t buf_size = 0;
+    char *buf = get_ptrs_from_file("byte_code.bin", &buf_size);
     // todo: header signature
-    spu_ctor(&proc, all_codes, n_codes);
+    spu_ctor(&proc, buf, buf_size);
     runner(&proc);
     SPU_DUMP(&proc);
     spu_dtor(&proc);

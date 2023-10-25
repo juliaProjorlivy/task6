@@ -16,7 +16,7 @@ int main()
     struct stat file_buf;
     stat("code_asm.txt", &file_buf);
     ssize_t file_size = file_buf.st_size;
-    char *buf = (char *)calloc(sizeof(char), file_size);
+    char *buf = (char *)calloc(sizeof(char), (size_t)file_size);
 
     char *data = get_data_from_file("code_asm.txt", &data_size);
     char **lines = make_ptr_array(data, &str_count);

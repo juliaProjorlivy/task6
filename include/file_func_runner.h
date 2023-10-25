@@ -3,6 +3,6 @@
 
 #include <stdio.h>
 
-struct codes *get_ptrs_from_file(const char *file_name, size_t *n_com);
+char *get_ptrs_from_file(const char *file_name, size_t *buf_size);
 
 #endif

@@ -37,4 +37,6 @@ struct codes *assembler(char *buf, size_t *i_buf, char **lines, size_t *n_lines)
 
 void free_labels(struct label *labels, size_t n_in_labels);
 
+void fill_buf(char *buf, size_t *i_buf, char *arg, size_t size);
+
 #endif

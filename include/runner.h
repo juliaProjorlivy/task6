@@ -35,12 +35,13 @@ typedef enum
     END = 1,
 } status;
 
-status compare_with_commands(struct spu *proc, elem_t *reg, elem_t arg);
+status compare_with_commands(struct spu *proc, elem_t arg);
+
+int has_arg(struct codes *code);
 
 int runner(struct spu *proc);
 
 #define DEF_CMD(NAME, command_code, code) status F_##NAME(struct spu *proc, elem_t arg);
-DEF_CMD(PUSH, 1, printf("ddd");)
 #include "def_cmd.txt"
 #undef DEF_CMD
 

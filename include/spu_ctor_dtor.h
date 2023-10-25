@@ -3,7 +3,7 @@
 
 #include <stdio.h>
 
-void spu_ctor(struct spu *proc, struct codes *all_codes, size_t n_codes);
+int spu_ctor(struct spu *proc, char *buf, size_t buf_size);
 
 void spu_dtor(struct spu *proc);
 

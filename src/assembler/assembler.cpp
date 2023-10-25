@@ -260,8 +260,6 @@ struct label *fill_labels(char **lines, size_t n_lines, size_t *n_labels, size_t
             fill_buf(buf, i_buf, (char *)arg, sizeof(elem_t));          \
             break                             
 
-// int jump_arg(elem_t *arg, struct codes *code, const char *line, struct label *labels, size_t *n_filled_labels)
-// convert line into the struct codes
 void fill_buf(char *buf, size_t *i_buf, char *arg, size_t size)
 {
     for(size_t i = 0; i < size; i++)
@@ -294,8 +292,6 @@ int asm_for_single_line(char *buf, size_t *i_buf, elem_t *arg, const char *line,
     }
 
     fill_buf(buf, i_buf, (char *)(code), sizeof(codes));
-    // *buf = *((char *)code);
-    // buf += sizeof(codes);
 
     (*i_code)++;
     line += len_com + 1;

@@ -4,7 +4,7 @@
 #include "verror.h"
 #include <stdlib.h>
 
-struct codes *get_ptrs_from_file(const char *file_name, size_t *n_com)
+char *get_ptrs_from_file(const char *file_name, size_t *buf_size)
 {
     FILE *file = fopen(file_name, "rb");
     if(file == NULL)
@@ -13,20 +13,20 @@ struct codes *get_ptrs_from_file(const char *file_name, size_t *n_com)
         return NULL;
     }
 
-    if(fread(n_com, sizeof(size_t), 1, file) <= 0)
+    if(fread(buf_size, sizeof(size_t), 1, file) <= 0)
     {
         VERROR_FWRITE(file_name);
         return NULL;
     }
 
-    struct codes *all_codes = (struct codes *)calloc(sizeof(codes), *n_com);
-    if(all_codes == NULL)
+    char *buf = (char *)calloc(sizeof(char), *buf_size);
+    if(buf == NULL)
     {
         VERROR("memory allocation failire");
         return NULL;
     }
 
-    if(fread(all_codes, sizeof(codes), *n_com, file) <= 0)
+    if(fread(buf, sizeof(char), *buf_size, file) <= 0)
     {
         VERROR_FWRITE(file_name);
         return NULL;
@@ -34,5 +34,5 @@ struct codes *get_ptrs_from_file(const char *file_name, size_t *n_com)
 
     close_file(file, file_name);
 
-    return all_codes;
+    return buf;
 }

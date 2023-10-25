@@ -14,6 +14,9 @@ status compare_with_commands(struct spu *proc, elem_t arg)
     switch (command)
     {
 #include "def_cmd.txt"
+        default:
+            VERROR("unexpected command \"%s\"", commands[command].str);
+            return END;
     }
 
     return END; // SMTH WENT WRONG
