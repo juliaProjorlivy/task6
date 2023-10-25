@@ -2,103 +2,48 @@
 #include "runner.h"
 #include "verror.h"
 
-#define CASE_JUMP(NAME, name, proc, arg)    \
+#define DEF_CMD(NAME, command_code, code)   \
         case NAME:                          \
-            name((proc), ((size_t)arg));    \
-            break
+            return F_##NAME(proc, arg);
 
-status compare_with_commands(struct spu *proc, elem_t *reg, elem_t arg)
+
+status compare_with_commands(struct spu *proc, elem_t arg)
 {
-    command_t command = (command_t)proc->all_codes[proc->ip_code].op;
+    command_t command = (command_t)((*(codes *)(proc->buf + proc->ip_buf)).op);
     
     switch (command)
     {
-    case PUSH:
-        push(proc->stk, reg, arg);
-        break;
-    case POP:
-        pop(proc, reg);
-        break;
-    case ADD:
-        add(proc->stk);
-        break;
-    case SUB:
-        sub(proc->stk);
-        break;
-    case MUL:
-        mul(proc->stk);
-        break;
-    case DIV:
-        div(proc->stk);
-        break;
-    case SQRT:
-        sqroot(proc->stk);
-        break;
-    case COS:
-        cosine(proc->stk);
-        break;
-    case SIN:
-        sinus(proc->stk);
-        break;
-    case IN:
-        in(proc->stk);
-        break;
-    case OUT:
-        out(proc->stk);
-        break;
-    case HLT:
-        hlt(proc);
-        return END;
-    case CALL:
-        call(proc, arg);
-        break;
-    case RET:
-        ret(proc);
-        break;
-    CASE_JUMP(JMP, jmp, proc, arg);
-    CASE_JUMP(JA, ja, proc, arg);
-    CASE_JUMP(JAE, jae, proc, arg);
-    CASE_JUMP(JB, jb, proc, arg);
-    CASE_JUMP(JBE, jbe, proc, arg);
-    CASE_JUMP(JNE, jne, proc, arg);
-    CASE_JUMP(JE, je, proc, arg);
-    case NOT_COMMAND:
-        VERROR("no such command as %s", command);
-        return END;
-    default:
-        VERROR("unexpected command %s", command);
-        return END;
+#include "def_cmd.txt"
     }
 
-    return CONTINUE;
+    return END; // SMTH WENT WRONG
+}
+
+int has_arg(struct codes *code)
+{
+    command_t com = (command_t)(code->op);
+
+    return ((com == POP && code->to_ram) || (com == PUSH || com == JMP || com == JA || com == JAE || com == JB || com == JBE || com == JE || com == JNE));
 }
 
 int runner(struct spu *proc)
 {
-    // proc->cur_pos = 0;
-    // proc->ip_code = 0;
-    
-    for(; proc->ip_code < proc->n_codes; proc->ip_code++ && proc->cur_pos++) // here there is a problem with jump it returns ip_code normal but after that string it increases on 1
+    elem_t arg = 0;
+
+    while(proc->ip_buf < proc->buf_size)
     {
-        elem_t *reg = NULL;
-        elem_t arg = proc->all_codes[proc->ip_code].arg;
-
-        if(proc->all_codes[proc->ip_code].reg > 0) // if has registers
+        struct codes code = *((codes *)(proc->buf + proc->ip_buf));
+        proc->ip_buf += sizeof(codes);
+        if(has_arg(&code))
         {
-            reg = &(proc->registers.arr_regs[proc->all_codes[proc->ip_code].reg - 1]);
-            proc->cur_pos++;
+            arg = *((elem_t *)(proc->buf + proc->ip_buf)); // TO INCREASE PROC->IP_BUF IN COMMAND FUNC
         }
-        else if(proc->all_codes[proc->ip_code].has_arg)
+        if(compare_with_commands(proc, arg) == END)
         {
-            proc->cur_pos++;
-        }
-
-        if(compare_with_commands(proc, reg, arg) == END) // put jump arg in arg
-        {
-            proc->ip_code++;
-            proc->cur_pos++;
+            proc->ip_buf += sizeof(codes);
             return 0;
         }
     }
+
     return 0;
 }

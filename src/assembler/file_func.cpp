@@ -1,6 +1,6 @@
+#include "commands.h"
 #include "file_func.h"
 #include "assembler.h"
-#include "commands.h"
 #include "verror.h"
 #include <stdlib.h>
 #include <assert.h>
@@ -91,7 +91,7 @@ char *get_data_from_file(const char *filename, size_t *data_size) // collect dat
     return NULL;
 }
 
-int write_file(const char *file_name, struct codes *all_codes, size_t n_com)
+int write_file(char *buf, const char *file_name, size_t n_com, size_t i_buf)
 {
     FILE *file = fopen(file_name, "wb");
     if(file == NULL)
@@ -106,11 +106,17 @@ int write_file(const char *file_name, struct codes *all_codes, size_t n_com)
         return 1;
     }
     
-    if(fwrite(all_codes, sizeof(codes), n_com, file)  < n_com)
+    if(fwrite(buf, sizeof(char), i_buf, file)  < i_buf)
     {
         VERROR_FWRITE(file_name);
         return 1;
     }
+
+    // if(fwrite(all_codes, sizeof(codes), n_com, file)  < n_com)
+    // {
+    //     VERROR_FWRITE(file_name);
+    //     return 1;
+    // }
 
     close_file(file, file_name);
     return 0;

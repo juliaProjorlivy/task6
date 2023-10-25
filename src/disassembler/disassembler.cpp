@@ -38,7 +38,7 @@ char *dasm_for_single_code(struct codes *code)
         return NULL;
     }
 
-    char *line = (char *)calloc(sizeof(char), max_length); //free
+    char *line = (char *)calloc(sizeof(char), max_length);
     if(line == NULL)
     {
         VERROR("memory allocation failure");

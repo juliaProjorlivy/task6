@@ -1,0 +1,98 @@
+DEF_CMD(NOT_COMMAND, 0, return END;)
+DEF_CMD(PUSH, 1, PUSH_FUNC)
+DEF_CMD(POP, 2, POP_FUNC)
+DEF_CMD(ADD, 3,
+    (void)arg;
+    elem_t arg_1 = 0;
+    elem_t arg_2 = 0;
+    stack_pop(proc->stk, &arg_1);
+    stack_pop(proc->stk, &arg_2);
+    stack_push(proc->stk, arg_2 + arg_1);)
+DEF_CMD(SUB, 4,
+    (void)arg;
+    elem_t arg_1 = 0;
+    elem_t arg_2 = 0;
+    stack_pop(proc->stk, &arg_1);
+    stack_pop(proc->stk, &arg_2);
+    stack_push(proc->stk, arg_2 - arg_1);)
+DEF_CMD(MUL, 5,
+    (void)arg;
+    elem_t arg_1 = 0;
+    elem_t arg_2 = 0;
+    stack_pop(proc->stk, &arg_1);
+    stack_pop(proc->stk, &arg_2);
+    stack_push(proc->stk, arg_2 * arg_1);)
+DEF_CMD(DIV, 6,
+    (void)arg;
+    elem_t arg_1 = 0;
+    elem_t arg_2 = 0;
+    stack_pop(proc->stk, &arg_1);
+    stack_pop(proc->stk, &arg_2);
+    if(!is_equal(arg_1, 0))
+    {
+        stack_push(proc->stk, arg_2 / arg_1);
+    }
+    else
+    {
+        VERROR("division by zero");
+        return END;
+    })
+DEF_CMD(SQRT, 7, 
+    (void)arg;
+    elem_t value = 0;
+    stack_pop(proc->stk, &value);
+
+    if(value > 0 || is_equal(value, 0))
+    {
+        stack_push(proc->stk, sqrt(value));
+    }
+    else
+    {
+        VERROR("taking the root of a negative number");
+        return END;
+    })
+DEF_CMD(COS, 8,
+    (void)arg;
+    elem_t value = 0;
+    stack_pop(proc->stk, &value);
+    stack_push(proc->stk, cos(value));)
+DEF_CMD(SIN, 9,
+    (void)arg;
+    elem_t value = 0;
+    stack_pop(proc->stk, &value);
+    stack_push(proc->stk, sin(value));)
+DEF_CMD(IN, 10,
+    (void)arg;
+    elem_t value = 0;
+    int is_correctly_read = scanf(ELEM_PRINT_SPEC, &value);
+    if(!is_correctly_read)
+    {
+        VERROR("troubles reading the file");
+        return END;
+    }
+    stack_push(proc->stk, value);)
+DEF_CMD(OUT, 11,
+    (void)arg;
+    elem_t value = 0;
+    stack_pop(proc->stk, &value);
+    printf(ELEM_PRINT_SPEC "\n", value);)
+DEF_CMD(HLT, 12,
+    (void)arg;
+    stack_dtor(proc->stk);
+    stack_dtor(proc->address_stk);
+    return END;)
+DEF_CMD(JMP, 13, proc->ip_buf = (size_t)arg;)
+DEF_CMD(JA, 14, MAKE_F_JUMP(>, proc, arg))
+DEF_CMD(JAE, 15, MAKE_F_JUMP(>=, proc, arg))
+DEF_CMD(JB, 16, MAKE_F_JUMP(<, proc, arg))
+DEF_CMD(JBE, 17, MAKE_F_JUMP(<=, proc, arg))
+DEF_CMD(JNE, 18, MAKE_F_JUMP(!=, proc, arg))
+DEF_CMD(JE, 19, MAKE_F_JUMP(==, proc, arg))
+DEF_CMD(CALL, 20,
+    stack_push(proc->address_stk, proc->ip_buf + 1);
+    F_JMP(proc, arg);)
+DEF_CMD(RET, 21,
+    (void)arg;
+    elem_t new_ip_buf = 0;
+    stack_pop(proc->address_stk, &new_ip_buf);
+    F_JMP(proc, new_ip_buf);)

@@ -3,9 +3,10 @@
 #include "runner.h"
 #include <stdlib.h>
 
-const int capacity = 5;
+static const int capacity = 5;
+static const int ram_size = 20;
 
-void spu_ctor(struct spu *proc, struct codes *all_codes, size_t n_codes)
+void spu_ctor(struct spu *proc, char *buf, size_t buf_size)
 {
     struct stack *stk = (struct stack *)calloc(sizeof(stack), 1);
     STACK_CTOR(stk, capacity);
@@ -13,18 +14,24 @@ void spu_ctor(struct spu *proc, struct codes *all_codes, size_t n_codes)
     struct stack *address_stk = (struct stack *)calloc(sizeof(stack), 1);
     STACK_CTOR(address_stk, capacity);
 
+    elem_t *ram = (elem_t *)calloc(sizeof(elem_t), ram_size);
+
     proc->stk = stk;
     proc->address_stk = address_stk;
-    proc->n_codes = n_codes;
-    proc->ip_code = 0;
-    proc->cur_pos = 0;
-    proc->all_codes = all_codes;
-    proc->registers.arr_regs = (elem_t *)calloc(sizeof(elem_t), n_registers); 
+    proc->buf_size = buf_size;
+    proc->ip_buf = 0;
+    proc->buf = buf;
+    proc->ram = ram;
+    proc->regs.rax = 0;
+    proc->regs.rbx = 0;
+    proc->regs.rcx = 0;
+    proc->regs.rdx = 0;
 }
 
 void spu_dtor(struct spu *proc)
 {
-    free(proc->registers.arr_regs);
     free(proc->stk);
-    free(proc->all_codes);
+    free(proc->address_stk);
+    free(proc->buf);
+    free(proc->ram);
 }

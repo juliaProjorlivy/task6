@@ -6,29 +6,35 @@
 #define REG_MASK 0x3
 #define OP_MASK 0x1f
 
-struct lable
+static const size_t N_LABELS = 10;
+static const ssize_t label_length = 20;
+
+struct label
 {
     char *name;
     ssize_t ip;
 };
-static const size_t n_lables = 10;
 
-int asm_for_single_line(const char *line, struct codes *code, struct lable **lables, size_t *n_in_lables, size_t *i_code);
+int fill_register(struct codes *code, char *str_register);
 
-struct codes *assembler(char **lines, size_t *n_lines);
+int fill_command(struct codes *code, char *str_command);
 
-int pop_has_arg(struct codes *code, const char *line);
+elem_t *label_arg(struct label *labels, const char *str_command, size_t n_filled_labels);
 
-int push_has_arg(struct codes *code, const char *line);
+int push_has_arg(elem_t *arg, struct codes *code, const char *line);
 
-int jump_has_arg(struct codes *code, const char *line, struct lable **lables, size_t *i_in_lables);
+int pop_has_arg(elem_t *arg, struct codes *code, const char *line);
 
-int is_register(struct codes *code, char *str_register);
+int jump_has_arg(elem_t *arg, struct codes *code, const char *line, struct label *labels, size_t *n_filled_labels);
 
-int is_command(struct codes *code, char *str_command);
+int fill_empty_labels(struct label *labels, size_t i_label, size_t n_labels);
 
-int is_lable(struct codes *code, struct lable **lables, const char *str_command, size_t *i_in_lables);
+struct label *fill_labels(char **lines, size_t n_lines, size_t *n_labels, size_t *n_filled_labels);
 
-int fill_lables(struct lable **lables, char **lines, size_t n_lines, size_t *i_in_lables);
+int asm_for_single_line(char *buf, size_t *i_buf, elem_t *arg, const char *line, struct codes *code, struct label *labels, size_t n_filled_labels, size_t *i_code);
+
+struct codes *assembler(char *buf, size_t *i_buf, char **lines, size_t *n_lines);
+
+void free_labels(struct label *labels, size_t n_in_labels);
 
 #endif
