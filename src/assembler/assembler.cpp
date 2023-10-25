@@ -341,13 +341,7 @@ int assembler(char *buf, size_t *i_buf, char **lines, size_t *n_lines)
     }
 
     size_t i_code = 0;
-    // struct codes *all_codes = (struct codes *)calloc(sizeof(codes), *n_lines);
-    // if(all_codes == NULL)
-    // {
-    //     VERROR_MEM;
-    //     free_labels(labels, n_labels);
-    //     return NULL;
-    // }
+   
     struct codes code = {};
 
     elem_t arg = 0;

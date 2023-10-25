@@ -13,21 +13,16 @@ int main()
     size_t str_count = 0;
     size_t i_buf = 0;
 
-    struct stat file_buf;
-    stat("code_asm.txt", &file_buf);
-    ssize_t file_size = file_buf.st_size;
-    char *buf = (char *)calloc(sizeof(char), (size_t)file_size);
-
     char *data = get_data_from_file("code_asm.txt", &data_size);
     char **lines = make_ptr_array(data, &str_count);
 
+    char *buf = (char *)calloc(sizeof(char), data_size);
+
     assembler(buf, &i_buf, lines, &str_count);
-    // printf("op = %d \n", (int)(all_codes[0].op));
     write_file(buf, "byte_code.bin", str_count, i_buf);
 
     free(data);
     free(lines);
-    // free(all_codes);
     free(buf);
     return 0;
 }
