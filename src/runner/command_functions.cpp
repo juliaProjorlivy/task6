@@ -42,7 +42,6 @@ static inline int is_equal(elem_t x, elem_t y, double epsilon = 1e-9)
     else                                                        \
     {                                                           \
         proc->ram[(size_t)(arg)] = value;                       \
-        proc->ip_buf += sizeof(elem_t);                         \
     }                                                           \
 
 
@@ -62,13 +61,13 @@ static inline int is_equal(elem_t x, elem_t y, double epsilon = 1e-9)
     }                                                           \
     else if(cur_code.to_ram)                                    \
     {                                                           \
-        stack_push(proc->stk, proc->ram[(size_t)arg]);           \
+        stack_push(proc->stk, proc->ram[(size_t)arg]);          \
     }                                                           \
     else                                                        \
     {                                                           \
         stack_push(proc->stk, arg);                             \
-    }                                                           \
-    proc->ip_buf += sizeof(elem_t);
+    }                                                           
+    // proc->ip_buf += sizeof(elem_t);
 
 #define DEF_CMD(NAME, command_code, code) status F_##NAME(struct spu *proc, elem_t arg){code return CONTINUE;}
 #include "def_cmd.txt"

@@ -45,17 +45,18 @@ int fill_command(struct codes *code, char *str_command)
 }
 
 
-elem_t *label_arg(struct label *labels, const char *str_command, size_t n_filled_labels)
+int label_arg(elem_t *arg, struct label *labels, const char *str_command, size_t n_filled_labels)
 {
     for(size_t i_label = 0; i_label < n_filled_labels; i_label++)
     {
         if(!strcmp((labels + i_label)->name, str_command))
         {
-            return ((elem_t *)(&((labels + i_label)->ip)));
+            *arg = (elem_t )((labels + i_label)->ip);
+            return 1;
         }
     }
 
-    return NULL;
+    return 0;
 }
 
 
@@ -150,7 +151,7 @@ int jump_has_arg(elem_t *arg, struct codes *code, const char *line, struct label
         return 0;
     }
 
-    if((arg = label_arg(labels, str_label, *n_filled_labels)) == NULL)
+    if(!label_arg(arg, labels, str_label, *n_filled_labels))
     {
         VERROR("incorrect argument %s is given to %s", str_label, commands[code->op].str);
         return 0;
@@ -257,17 +258,29 @@ struct label *fill_labels(char **lines, size_t n_lines, size_t *n_labels, size_t
             {                                                           \
                 return 1;                                               \
             }                                                           \
-            fill_buf(buf, i_buf, (char *)arg, sizeof(elem_t));          \
-            break                             
+            *((codes *)(buf + *i_buf)) = *code;                         \
+            (*i_buf) += sizeof(codes);                                  \
+            *((elem_t *)(buf + *i_buf)) = *arg;                         \
+            (*i_buf) += sizeof(elem_t);                                 \
+            return 0                            
 
-void fill_buf(char *buf, size_t *i_buf, char *arg, size_t size)
-{
-    for(size_t i = 0; i < size; i++)
-    {
-        *(buf + *i_buf) = *(arg + i);
-        (*i_buf)++;
-    }
-}
+// #define MASK 0x00000001
+// void fill_buf(char *buf, size_t *i_buf, char *arg, size_t size)
+// {
+//     for(size_t i = 0; i < size; i++)
+//     {
+//         // *(buf + *i_buf) = *(arg + i);
+//         if(*i_buf < 50)
+//         {
+//             for(size_t j = 0; j < 8; j++)
+//             {
+//                 printf("%d", (*(buf + *i_buf)) & (MASK << j));
+//             }
+//             printf(" ");
+//         }
+//         // (*i_buf)++;
+//     }
+// }
 
 int asm_for_single_line(char *buf, size_t *i_buf, elem_t *arg, const char *line, struct codes *code, struct label *labels, size_t n_filled_labels)
 {
@@ -283,15 +296,13 @@ int asm_for_single_line(char *buf, size_t *i_buf, elem_t *arg, const char *line,
 
     if(!fill_command(code, str_command))
     {
-        if((arg = label_arg(labels, str_command, n_filled_labels)) != NULL)
+        if(label_arg(arg, labels, str_command, n_filled_labels))
         {
             return 0;
         }
         VERROR("no such command as %s", str_command);
         return 1;
     }
-
-    fill_buf(buf, i_buf, (char *)(code), sizeof(codes));
 
     line += len_com + 1;
     switch(code->op)
@@ -301,18 +312,27 @@ int asm_for_single_line(char *buf, size_t *i_buf, elem_t *arg, const char *line,
             {
                 return 1;
             }
-            fill_buf(buf, i_buf, (char *)arg, sizeof(elem_t));
-            break;
+         
+            *((codes *)(buf + *i_buf)) = *code;
+            (*i_buf) += sizeof(codes);
+            *((elem_t *)(buf + *i_buf)) = *arg;
+            (*i_buf) += sizeof(elem_t);
+            return 0;
         case POP:
             if(!pop_has_arg(arg, code, line))
             {
                 return 1;
             }
+
+            *((codes *)(buf + *i_buf)) = *code;
+            (*i_buf) += sizeof(codes);
+
             if(!code->reg)
             {
-                fill_buf(buf, i_buf, (char *)arg, sizeof(elem_t));
+                *((elem_t *)(buf + *i_buf)) = *arg;
+                (*i_buf) += sizeof(elem_t);
             }
-            break;
+            return 0;
         CASE_JUMP(JMP);
         CASE_JUMP(JA);
         CASE_JUMP(JAE);
@@ -322,6 +342,8 @@ int asm_for_single_line(char *buf, size_t *i_buf, elem_t *arg, const char *line,
         CASE_JUMP(JE);
         CASE_JUMP(CALL);
         default:
+            *((codes *)(buf + *i_buf)) = *code;
+            (*i_buf) += sizeof(codes);
             break;
     }
 
@@ -329,23 +351,23 @@ int asm_for_single_line(char *buf, size_t *i_buf, elem_t *arg, const char *line,
 }
 
 //                      arr of ptrs of lines | number of lines
-int assembler(char *buf, size_t *i_buf, char **lines, size_t *n_lines)
+int assembler(char *buf, size_t *i_buf, char **lines, size_t n_lines)
 {
     size_t n_labels = 10;
     size_t n_filled_labels = 0;
-    struct label *labels = fill_labels(lines, *n_lines, &n_labels, &n_filled_labels);
+    struct label *labels = fill_labels(lines, n_lines, &n_labels, &n_filled_labels);
     if(labels == NULL)
     {
         VERROR_MEM;
         return 1;
     }
 
-    size_t i_code = 0;
+    // size_t i_code = 0;
    
     struct codes code = {};
 
     elem_t arg = 0;
-    for(size_t line_i = 0; line_i < *n_lines; line_i++)
+    for(size_t line_i = 0; line_i < n_lines; line_i++)
     {
         if(asm_for_single_line(buf, i_buf, &arg, lines[line_i], &code, labels, n_filled_labels))
         {
@@ -354,11 +376,14 @@ int assembler(char *buf, size_t *i_buf, char **lines, size_t *n_lines)
             free_labels(labels, n_labels);
             return 1;
         }
+
+        code = {};
+        arg = 0;
     }
 
     free_labels(labels, n_labels);
-
-    (*n_lines) = i_code;    
+    (*i_buf)++; // starts from the 0
+  
     return 0;
 }
  

@@ -6,6 +6,7 @@
 
 char *get_ptrs_from_file(const char *file_name, size_t *buf_size)
 {
+    size_t n_com = 0;
     FILE *file = fopen(file_name, "rb");
     if(file == NULL)
     {
@@ -14,6 +15,12 @@ char *get_ptrs_from_file(const char *file_name, size_t *buf_size)
     }
 
     if(fread(buf_size, sizeof(size_t), 1, file) <= 0)
+    {
+        VERROR_FWRITE(file_name);
+        return NULL;
+    }
+
+    if(fread(&n_com, sizeof(size_t), 1, file) <= 0)
     {
         VERROR_FWRITE(file_name);
         return NULL;

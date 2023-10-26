@@ -59,7 +59,7 @@ lib/stack/lib/libStack.a:
 
 pre_asm:
 	@echo "CXX pre $(EXECUTABLE_ASM)"
-	@$(CXX) $(CXX_FLAGS) -E -dD -lasan $(SRCS_ASM)
+	@$(CXX) $(CXX_FLAGS) -E -lasan $(SRCS_ASM)
 
 .PHONY: clean mem
 

@@ -38,12 +38,12 @@ const char *is_command(struct codes *code)
 
 char *dasm_for_single_code(char *buf, size_t *i_buf)
 {
-    struct codes *code = (codes *)(buf + *i_buf);
+    struct codes code = *((codes *)(buf + *i_buf));
     *i_buf += sizeof(codes);
-    const char *str_command = is_command(code);
+    const char *str_command = is_command(&code);
     if(str_command == NULL)
     {
-        VERROR("no such command as %zu", code->op);
+        VERROR("no such command as %zu", code.op);
         return NULL;
     }
 
@@ -63,16 +63,16 @@ char *dasm_for_single_code(char *buf, size_t *i_buf)
         return NULL;
     }
     line += com_len;
-    if(code->reg)
+    if(code.reg)
     {
-        const char *str_register = is_register(code);
+        const char *str_register = is_register(&code);
         if(str_register == NULL)
         {
-            VERROR("no such register as %zu", code->reg);
+            VERROR("no such register as %zu", code.reg);
             free(line);
             return NULL;
         }
-        if(code->to_ram)
+        if(code.to_ram)
         {
             line++;
             if(sprintf(line, "[") <= 0)
@@ -88,7 +88,7 @@ char *dasm_for_single_code(char *buf, size_t *i_buf)
             return NULL;
         }
 
-        if(code->to_ram)
+        if(code.to_ram)
         {
             line++;
             if(sprintf(line, "[") <= 0)
@@ -100,9 +100,9 @@ char *dasm_for_single_code(char *buf, size_t *i_buf)
         line += com_len;
     }
 
-    else if(has_arg(code))
+    else if(has_arg(&code))
     {
-        if(code->to_ram)
+        if(code.to_ram)
         {
             line++;
             if(sprintf(line, "[") <= 0)
@@ -117,7 +117,7 @@ char *dasm_for_single_code(char *buf, size_t *i_buf)
             free(line);
             return NULL;
         }
-        if(code->to_ram)
+        if(code.to_ram)
         {
             line++;
             if(sprintf(line, "[") <= 0)

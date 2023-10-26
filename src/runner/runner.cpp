@@ -36,16 +36,18 @@ int runner(struct spu *proc)
     while(proc->ip_buf < proc->buf_size)
     {
         struct codes code = *((codes *)(proc->buf + proc->ip_buf));
-        proc->ip_buf += sizeof(codes);
+    
         if(has_arg(&code))
         {
-            arg = *((elem_t *)(proc->buf + proc->ip_buf)); // TO INCREASE PROC->IP_BUF IN COMMAND FUNC
+            arg = *((elem_t *)(proc->buf + proc->ip_buf + sizeof(codes))); // TO INCREASE PROC->IP_BUF IN COMMAND FUNC
         }
         if(compare_with_commands(proc, arg) == END)
         {
             proc->ip_buf += sizeof(codes);
             return 0;
         }
+        proc->ip_buf += sizeof(codes) + has_arg(&code) * sizeof(elem_t);
+        arg = 0;
     }
 
     return 0;

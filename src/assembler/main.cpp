@@ -18,7 +18,8 @@ int main()
 
     char *buf = (char *)calloc(sizeof(char), data_size);
 
-    assembler(buf, &i_buf, lines, &str_count);
+    assembler(buf, &i_buf, lines, str_count);
+    buf = (char *)realloc(buf, i_buf * sizeof(char));
     write_file(buf, "byte_code.bin", str_count, i_buf);
 
     free(data);
