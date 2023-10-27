@@ -7,9 +7,10 @@ int has_arg(struct codes *code)
 {
     command_t com = (command_t)(code->op);
 
-    return ((com == POP && code->to_ram) || (com == PUSH || com == JMP || com == JA || com == JAE || com == JB || com == JBE || com == JE || com == JNE));
+    return ((com == POP && code->to_ram) || (com == PUSH && !(code->reg)) ||
+    com == JMP || com == JA || com == JAE || com == JB || com == JBE ||
+    com == JE || com == JNE || com == CALL);
 }
-
 const char *is_register(struct codes *code)
 {
     for(size_t reg_i = 0; reg_i < n_registers; reg_i++) // if it is one of registers:
@@ -74,12 +75,12 @@ char *dasm_for_single_code(char *buf, size_t *i_buf)
         }
         if(code.to_ram)
         {
-            line++;
             if(sprintf(line, "[") <= 0)
             {
                 VERROR("failed to fill the line");
                 return NULL;
             }
+            line++;
         }
 
         if(sprintf(line, "%s%n", str_register, &com_len) <= 0)
@@ -87,29 +88,28 @@ char *dasm_for_single_code(char *buf, size_t *i_buf)
             VERROR("failed to fill the line");
             return NULL;
         }
-
+        line += com_len;
         if(code.to_ram)
         {
-            line++;
-            if(sprintf(line, "[") <= 0)
+            if(sprintf(line, "]") <= 0)
             {
                 VERROR("failed to fill the line");
                 return NULL;
             }
+            line++;
         }
-        line += com_len;
     }
 
     else if(has_arg(&code))
     {
         if(code.to_ram)
         {
-            line++;
             if(sprintf(line, "[") <= 0)
             {
                 VERROR("failed to fill the line");
                 return NULL;
             }
+            line++;
         }
         if(sprintf(line, ELEM_PRINT_SPEC "%n", *((elem_t *)(buf + *i_buf)), &com_len) <= 0)
         {
@@ -117,17 +117,17 @@ char *dasm_for_single_code(char *buf, size_t *i_buf)
             free(line);
             return NULL;
         }
+        line += com_len;
         if(code.to_ram)
         {
-            line++;
-            if(sprintf(line, "[") <= 0)
+            if(sprintf(line, "]") <= 0)
             {
                 VERROR("failed to fill the line");
                 return NULL;
             }
+            line++;
         }
         *i_buf += sizeof(elem_t);
-        line += com_len;
     }
 
     if(sprintf(line, "\n") <= 0)

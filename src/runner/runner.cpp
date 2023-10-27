@@ -1,15 +1,16 @@
 #include "commands.h"
 #include "runner.h"
 #include "verror.h"
+#include "spu_dump.h"
 
 #define DEF_CMD(NAME, command_code, code)   \
         case NAME:                          \
-            return F_##NAME(proc, arg);
+            return F_##NAME(proc, arg, cur_code);
 
 
-status compare_with_commands(struct spu *proc, elem_t arg)
+status compare_with_commands(struct spu *proc, elem_t arg, struct codes cur_code)
 {
-    command_t command = (command_t)((*(codes *)(proc->buf + proc->ip_buf)).op);
+    command_t command = (command_t)(cur_code.op);
     
     switch (command)
     {
@@ -26,7 +27,9 @@ int has_arg(struct codes *code)
 {
     command_t com = (command_t)(code->op);
 
-    return ((com == POP && code->to_ram) || (com == PUSH || com == JMP || com == JA || com == JAE || com == JB || com == JBE || com == JE || com == JNE));
+    return ((com == POP && code->to_ram) || (com == PUSH && !(code->reg)) ||
+    com == JMP || com == JA || com == JAE || com == JB || com == JBE ||
+    com == JE || com == JNE || com == CALL);
 }
 
 int runner(struct spu *proc)
@@ -41,12 +44,14 @@ int runner(struct spu *proc)
         {
             arg = *((elem_t *)(proc->buf + proc->ip_buf + sizeof(codes))); // TO INCREASE PROC->IP_BUF IN COMMAND FUNC
         }
-        if(compare_with_commands(proc, arg) == END)
+        proc->ip_buf += sizeof(codes) + has_arg(&code) * sizeof(elem_t);
+        SPU_DUMP(proc);
+        if(compare_with_commands(proc, arg, code) == END)
         {
             proc->ip_buf += sizeof(codes);
             return 0;
         }
-        proc->ip_buf += sizeof(codes) + has_arg(&code) * sizeof(elem_t);
+        
         arg = 0;
     }
 

@@ -10,7 +10,7 @@ pop rax
 push rax
 push 2
 push rax
-je stop
+jb stop
 call distance
 push rax
 pop rax

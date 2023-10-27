@@ -13,20 +13,19 @@ static inline int is_equal(elem_t x, elem_t y, double epsilon = 1e-9)
     return (fabs (x - y) < epsilon);
 }
 
-#define MAKE_F_JUMP(sign, proc, arg)                \
+#define MAKE_F_JUMP(sign, proc, arg, cur_code)      \
         elem_t arg_1 = 0;                           \
         elem_t arg_2 = 0;                           \
         stack_pop((proc->stk), (&arg_1));           \
         stack_pop((proc->stk), (&arg_2));           \
         if((arg_1) sign (arg_2))                    \
         {                                           \
-            F_JMP((proc), (arg));                   \
+            F_JMP((proc), (arg), (cur_code));       \
         }
 
 #define POP_FUNC                                                \
     elem_t value = 0;                                           \
     stack_pop(proc->stk, &value);                               \
-    struct codes cur_code = *((codes *)(proc->buf + proc->ip_buf));\
     if(cur_code.reg)                                            \
     {                                                           \
         elem_t *reg = &((proc->arr_regs[cur_code.reg - 1]));    \
@@ -46,7 +45,6 @@ static inline int is_equal(elem_t x, elem_t y, double epsilon = 1e-9)
 
 
 #define PUSH_FUNC                                               \
-    struct codes cur_code = *((codes *)((proc->buf) + proc->ip_buf));\
     if(cur_code.reg)                                            \
     {                                                           \
         size_t in_reg_value = (size_t)(proc->arr_regs[cur_code.reg - 1]);\
@@ -67,13 +65,8 @@ static inline int is_equal(elem_t x, elem_t y, double epsilon = 1e-9)
     {                                                           \
         stack_push(proc->stk, arg);                             \
     }                                                           
-    // proc->ip_buf += sizeof(elem_t);
 
-#define DEF_CMD(NAME, command_code, code) status F_##NAME(struct spu *proc, elem_t arg){code return CONTINUE;}
+#define DEF_CMD(NAME, command_code, code) status F_##NAME(struct spu *proc, elem_t arg, struct codes cur_code){code return CONTINUE;}
 #include "def_cmd.txt"
 #undef DEF_CMD
 
-// #define DEF_CMD(name, code) name(proc, elem_t arg) {code}
-
-// cmds.txt:
-// DEF_CMD(JA, {MAKE_F_JUMP()})

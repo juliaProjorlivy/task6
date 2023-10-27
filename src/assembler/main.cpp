@@ -34,6 +34,8 @@ int main()
     buf = (char *)realloc(buf, i_buf * sizeof(char));
     write_file(buf, "byte_code.bin", str_count, i_buf);
 
+    printf("last op = %d\n", (*(codes *)(buf + i_buf - sizeof(codes))).op);
+
     free_labels(labels, n_labels);
     free(data);
     free(lines);

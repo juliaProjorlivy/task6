@@ -15,19 +15,23 @@ void spu_dump(struct spu *proc, const char *file, int line, const char *func, co
     size_t i_buf = 0;
     elem_t arg = 0;
     size_t i_code = 0;
-    size_t i_buf_cur = 0;
     
     while(i_buf < proc->buf_size)
     {
         int has_args = 0;
+        int print_arrow = 0;
 
         fprintf(stderr, "%2zu\t", i_code);
 
         struct codes cur_code = *((codes *)(proc->buf + i_buf));
         fprintf(stderr, "%2d\t", cur_code.op);
+        if(proc->ip_buf == i_buf)
+        {
+            print_arrow = 1;
+        }
         i_buf += sizeof(codes);
 
-        if((has_args = has_arg(&cur_code)))
+        if((has_arg(&cur_code)))
         {
             arg = *((elem_t *)(proc->buf + i_buf));
             fprintf(stderr, ELEM_PRINT_SPEC "\t", arg);
@@ -38,14 +42,12 @@ void spu_dump(struct spu *proc, const char *file, int line, const char *func, co
             fprintf(stderr, "%s" "\t", registers[cur_code.reg - 1].str);
         }
 
-        if(proc->ip_buf == i_buf_cur)
+        if(print_arrow)
         {
             fprintf(stderr, GREEN "\t <-" END_OF_GREEN);
         }
         fprintf(stderr, "\n");
-
-        i_buf_cur += sizeof(codes);
-        i_buf += has_args * (sizeof(elem_t));
+    
         i_code++;
     }
       

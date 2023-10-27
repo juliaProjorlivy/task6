@@ -153,7 +153,6 @@ int jump_has_arg(elem_t *arg, struct codes *code, const char *line, struct label
 
     if(!label_arg(arg, labels, str_label, *n_filled_labels))
     {
-        // VERROR("incorrect argument %s is given to %s", str_label, commands[code->op].str);
         *arg = -1;
         return 1;
     }
@@ -222,61 +221,6 @@ struct label *realloc_labels(size_t *n_labels, size_t *n_filled_labels, struct l
 
     return labels;
 }
-
-//     for(size_t i_line = 0; i_line < n_lines; i_line++)
-//     {
-//         if(*n_filled_labels + 1 >= *n_labels)
-//         {
-//             (*n_labels) *= 2;
-//             labels = (label *)realloc(labels, (*n_labels) * sizeof(label));
-//             if(labels == NULL)
-//             {
-//                 VERROR_MEM;
-//                 return NULL;
-//             }
-//             if(fill_empty_labels(labels, *n_filled_labels, *n_labels))
-//             {
-//                 VERROR_MEM;
-//                 return NULL;
-//             }
-//         }
-//         char line[label_length] = {};
-//         char colon[max_length] = {};
-//         int len_line = 0;
-
-//         if(sscanf(lines[i_line], "%s%n", line, &len_line) <= 0)
-//         {
-//             VERROR("troubles reading the line");
-//             return NULL;
-//         }
-//         sscanf(lines[i_line] + len_line + 1, "%s", colon);
-
-//         if(!strcmp(colon, ":"))
-//         {
-//             char *str_label = (char *)calloc(sizeof(char), label_length);
-//             strncpy(str_label, line, (size_t)len_line);
-//             (labels + *n_filled_labels)->name = str_label;
-//             (labels + *n_filled_labels)->ip = (ssize_t)i_buf;
-//             (*n_filled_labels)++;
-//         }
-//         else
-//         {
-//             i_buf += sizeof(codes);
-//             elem_t digit = 0;
-//             if(sscanf(lines[i_line] + len_line + 1, ELEM_PRINT_SPEC, &digit))
-//             {
-//                 i_buf += sizeof(elem_t);
-//             }
-//             else if(sscanf(lines[i_line] + len_line + 2, ELEM_PRINT_SPEC, &digit))
-//             {
-//                 i_buf += sizeof(elem_t);
-//             }
-//             else if()
-//         }
-//     }
-     
-//     return labels;
-// }
 
 #define CASE_JUMP(NAME)                                                 \
         case NAME:                                                      \
@@ -405,7 +349,7 @@ int assembler(char *buf, size_t *i_buf, char **lines, size_t n_lines, struct lab
         arg = 0;
     }
 
-    (*i_buf)++; // starts from the 0
+    // (*i_buf)++; // starts from the 0
 
     return 0;
 }
