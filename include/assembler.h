@@ -29,12 +29,14 @@ int jump_has_arg(elem_t *arg, struct codes *code, const char *line, struct label
 
 int fill_empty_labels(struct label *labels, size_t i_label, size_t n_labels);
 
-struct label *fill_labels(char **lines, size_t n_lines, size_t *n_labels, size_t *n_filled_labels);
+struct label *fill_labels(size_t *n_labels, size_t *n_filled_labels);
 
-int asm_for_single_line(char *buf, size_t *i_buf, elem_t *arg, const char *line, struct codes *code, struct label *labels, size_t n_filled_labels);
+int asm_for_single_line(char *buf, size_t *i_buf, elem_t *arg, const char *line, struct codes *code, struct label *labels, size_t *n_filled_labels);
 
-int assembler(char *buf, size_t *i_buf, char **lines, size_t n_lines);
+int assembler(char *buf, size_t *i_buf, char **lines, size_t n_lines, struct label *labels, size_t *n_labels, size_t *n_filled_labels);
 
 void free_labels(struct label *labels, size_t n_in_labels);
+
+struct label *realloc_labels(size_t *n_labels, size_t *n_filled_labels, struct label *labels);
 
 #endif

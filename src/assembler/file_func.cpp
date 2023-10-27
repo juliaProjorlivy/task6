@@ -117,12 +117,6 @@ int write_file(char *buf, const char *file_name, size_t n_com, size_t i_buf)
         return 1;
     }
 
-    // if(fwrite(all_codes, sizeof(codes), n_com, file)  < n_com)
-    // {
-    //     VERROR_FWRITE(file_name);
-    //     return 1;
-    // }
-
     close_file(file, file_name);
     return 0;
 }
