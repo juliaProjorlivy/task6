@@ -18,7 +18,6 @@ void spu_dump(struct spu *proc, const char *file, int line, const char *func, co
     
     while(i_buf < proc->buf_size)
     {
-        int has_args = 0;
         int print_arrow = 0;
 
         fprintf(stderr, "%2zu\t", i_code);

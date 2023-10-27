@@ -37,7 +37,7 @@ typedef enum
 
 status compare_with_commands(struct spu *proc, elem_t arg, struct codes cur_code);
 
-int has_arg(struct codes *code);
+size_t has_arg(struct codes *code);
 
 int runner(struct spu *proc);
 

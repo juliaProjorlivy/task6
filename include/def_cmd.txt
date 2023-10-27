@@ -99,7 +99,7 @@ DEF_CMD(JBE, 17, MAKE_F_JUMP(<=, proc, arg, cur_code))
 DEF_CMD(JNE, 18, MAKE_F_JUMP(!=, proc, arg, cur_code))
 DEF_CMD(JE, 19, MAKE_F_JUMP(==, proc, arg, cur_code))
 DEF_CMD(CALL, 20,
-    stack_push(proc->address_stk, proc->ip_buf);
+    stack_push(proc->address_stk, (elem_t)(proc->ip_buf));
     F_JMP(proc, arg, cur_code);)
 DEF_CMD(RET, 21,
     (void)arg;

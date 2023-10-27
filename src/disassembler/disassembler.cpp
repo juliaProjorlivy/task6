@@ -3,7 +3,7 @@
 #include "verror.h"
 #include <stdlib.h>
 
-int has_arg(struct codes *code)
+static int has_arg(struct codes *code)
 {
     command_t com = (command_t)(code->op);
 

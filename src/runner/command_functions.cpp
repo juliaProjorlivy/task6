@@ -54,7 +54,7 @@ static inline int is_equal(elem_t x, elem_t y, double epsilon = 1e-9)
         }                                                       \
         else                                                    \
         {                                                       \
-            stack_push(proc->stk, in_reg_value);                \
+            stack_push(proc->stk, (elem_t)in_reg_value);        \
         }                                                       \
     }                                                           \
     else if(cur_code.to_ram)                                    \

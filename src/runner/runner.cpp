@@ -23,7 +23,7 @@ status compare_with_commands(struct spu *proc, elem_t arg, struct codes cur_code
     return END; // SMTH WENT WRONG
 }
 
-int has_arg(struct codes *code)
+size_t has_arg(struct codes *code)
 {
     command_t com = (command_t)(code->op);
 
@@ -42,10 +42,10 @@ int runner(struct spu *proc)
     
         if(has_arg(&code))
         {
-            arg = *((elem_t *)(proc->buf + proc->ip_buf + sizeof(codes))); // TO INCREASE PROC->IP_BUF IN COMMAND FUNC
+            arg = *((elem_t *)(proc->buf + proc->ip_buf + sizeof(codes)));
         }
         proc->ip_buf += sizeof(codes) + has_arg(&code) * sizeof(elem_t);
-        SPU_DUMP(proc);
+        // SPU_DUMP(proc);
         if(compare_with_commands(proc, arg, code) == END)
         {
             proc->ip_buf += sizeof(codes);
