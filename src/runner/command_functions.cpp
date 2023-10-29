@@ -31,7 +31,7 @@ static inline int is_equal(elem_t x, elem_t y, double epsilon = 1e-9)
         elem_t *reg = &((proc->arr_regs[cur_code.reg - 1]));    \
         if(cur_code.to_ram)                                     \
         {                                                       \
-            proc->ram[*((size_t *)reg)] = value;                \
+            proc->ram[(size_t)(*reg)] = value;                  \
         }                                                       \
         else                                                    \
         {                                                       \
@@ -47,14 +47,14 @@ static inline int is_equal(elem_t x, elem_t y, double epsilon = 1e-9)
 #define PUSH_FUNC                                               \
     if(cur_code.reg)                                            \
     {                                                           \
-        size_t in_reg_value = (size_t)(proc->arr_regs[cur_code.reg - 1]);\
+        elem_t in_reg_value = proc->arr_regs[cur_code.reg - 1]; \
         if(cur_code.to_ram)                                     \
         {                                                       \
-            stack_push(proc->stk, proc->ram[in_reg_value]);     \
+            stack_push(proc->stk, proc->ram[(size_t)in_reg_value]);\
         }                                                       \
         else                                                    \
         {                                                       \
-            stack_push(proc->stk, (elem_t)in_reg_value);        \
+            stack_push(proc->stk, in_reg_value);                \
         }                                                       \
     }                                                           \
     else if(cur_code.to_ram)                                    \
@@ -65,6 +65,8 @@ static inline int is_equal(elem_t x, elem_t y, double epsilon = 1e-9)
     {                                                           \
         stack_push(proc->stk, arg);                             \
     }                                                           
+
+ // TODO: make double comparison with function
 
 #define DEF_CMD(NAME, command_code, code) status F_##NAME(struct spu *proc, elem_t arg, struct codes cur_code){code return CONTINUE;}
 #include "def_cmd.txt"

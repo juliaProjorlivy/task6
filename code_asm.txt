@@ -1,27 +1,30 @@
-push 1
-stop :
-push 100
-push 200
-sub
+main :
+in
+in
+in
+call discr
+push rax
 out
-push 1
-add
-pop rax
-push rax
-push 2
-push rax
-jb stop
-call distance
-push rax
-pop rax
-out
-push 22
-pop rcx
-push [rcx]
+push [rax]
 out
 hlt
-distance :
-in
-in
-add
+discr :
+pop rcx
+pop rbx
+pop rax
+push rbx
+push rbx
+mul
+push 4
+push rax
+push rcx
+mul
+mul
+sub
+push 10
+pop rax
+push rax
+out
+pop [rax]
 ret
+is_linear :

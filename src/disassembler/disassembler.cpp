@@ -157,7 +157,7 @@ char **disasm(char *buf, size_t buf_size, size_t n_codes)
 
         if(lines[i_code] == NULL)
         {
-            VERROR("some troubles in mini_dasm");
+            VERROR("some troubles");
             free(lines);
             return NULL;
         }

@@ -26,9 +26,9 @@ typedef enum
 
 struct codes
 {
-    unsigned char to_ram  : 1;
-    unsigned char reg     : 3;
-    unsigned char op      : 5; // operation
+    unsigned char to_ram : 1;
+    unsigned char reg    : 3;
+    unsigned char op     : 5; // operation
 };
 
 struct str_digit

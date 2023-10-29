@@ -1,4 +1,7 @@
-DEF_CMD(NOT_COMMAND, 0, return END;)
+DEF_CMD(NOT_COMMAND, 0, (void) proc; 
+                        (void) arg;
+                        (void) cur_code;
+                        return END;)
 DEF_CMD(PUSH, 1, PUSH_FUNC)
 DEF_CMD(POP, 2, POP_FUNC)
 DEF_CMD(ADD, 3,
@@ -91,7 +94,8 @@ DEF_CMD(HLT, 12,
     stack_dtor(proc->stk);
     stack_dtor(proc->address_stk);
     return END;)
-DEF_CMD(JMP, 13, proc->ip_buf = (size_t)arg;)
+DEF_CMD(JMP, 13, (void) cur_code;
+                 proc->ip_buf = (size_t)arg;)
 DEF_CMD(JA, 14, MAKE_F_JUMP(>, proc, arg, cur_code))
 DEF_CMD(JAE, 15, MAKE_F_JUMP(>=, proc, arg, cur_code))
 DEF_CMD(JB, 16, MAKE_F_JUMP(<, proc, arg, cur_code))

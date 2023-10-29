@@ -92,7 +92,7 @@ int push_has_arg(elem_t *arg, struct codes *code, const char *line)
 
         else if(sscanf(line, ELEM_PRINT_SPEC, arg) <= 0)
         {
-            VERROR("incorrect argument is given to %s", (command_t)code->op);
+            VERROR("incorrect argument is given to %s", commands[code->op].str);
             return 0;
         }
 
@@ -108,11 +108,10 @@ int pop_has_arg(elem_t *arg, struct codes *code, const char *line)
 
     if(sscanf(line, "%s%n", str_register, &len) == EOF)
     {
-        VERROR("no needed argument is given to %s", (command_t)code->op);
+        VERROR("no needed argument is given to %s", commands[code->op].str);
         return 0;
     }
 
-    // TODO: rename to fill_register
     if(!fill_register(code, str_register)) // it shouldn't be anything but register. fills code->reg inside is_register function
     {
         if(str_register[0] == '[' && str_register[len - 1] == ']') // pop [5] | pop [rax]
@@ -164,6 +163,7 @@ void free_labels(struct label *labels, size_t n_in_labels)
 {
     for(size_t i = 0; i < n_in_labels; i++)
     {
+        printf("freeing %zu\n", i);
         free((labels + i)->name);
     }
     free(labels);
@@ -254,13 +254,9 @@ int asm_for_single_line(char *buf, size_t *i_buf, elem_t *arg, const char *line,
             return 0;
         }
 
-        char colon[max_length] = {}; 
-        sscanf(line + len_com  + 1, "%s", colon);
-        if(!strncmp(":", colon, 1))
+        if((line[len_com + 1] == ':') && (isspace(line[len_com + 2]) || line[len_com + 2] == 0))
         {
-            char *str_label = (char *)calloc(sizeof(char), label_length);
-            strncpy(str_label, line, (size_t)len_com);
-            (labels + *n_filled_labels)->name = str_label;
+            strncpy((labels + *n_filled_labels)->name, line, (size_t)len_com);
             (labels + *n_filled_labels)->ip = *((ssize_t *)(i_buf));
             (*n_filled_labels)++;
             return 0;

@@ -36,6 +36,8 @@ int main()
 
     // printf("last op = %d\n", (*(codes *)(buf + i_buf - sizeof(codes))).op);
 
+    printf("n lab = %zu\n", n_labels);
+
     free_labels(labels, n_labels);
     free(data);
     free(lines);

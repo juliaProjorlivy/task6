@@ -27,7 +27,8 @@ size_t has_arg(struct codes *code)
 {
     command_t com = (command_t)(code->op);
 
-    return ((com == POP && code->to_ram) || (com == PUSH && !(code->reg)) ||
+    // TODO: use switch and def_cmd.
+    return ((com == POP && !(code->reg)) || (com == PUSH && !(code->reg)) ||
     com == JMP || com == JA || com == JAE || com == JB || com == JBE ||
     com == JE || com == JNE || com == CALL);
 }
