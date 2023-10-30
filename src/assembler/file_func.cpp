@@ -42,7 +42,7 @@ char **make_ptr_array(char *data, size_t *str_count) // returns the number of st
     assert(data != NULL);
     assert(str_count != NULL);
 
-    const size_t max_str_count = 200;
+    const size_t max_str_count = 2000;
 
     char **ptr_data = (char **)calloc(sizeof(char *), max_str_count);
     *str_count = split_line(data, ptr_data);

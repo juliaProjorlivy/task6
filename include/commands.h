@@ -8,7 +8,7 @@
 
 char *to_lower(const char *line, char *new_line);
 
-static const int max_length = 20;
+static const int max_length = 30;
 
 #define DEF_REG(NAME, reg_code) NAME = reg_code,
 typedef enum

@@ -163,7 +163,6 @@ void free_labels(struct label *labels, size_t n_in_labels)
 {
     for(size_t i = 0; i < n_in_labels; i++)
     {
-        printf("freeing %zu\n", i);
         free((labels + i)->name);
     }
     free(labels);
@@ -344,8 +343,6 @@ int assembler(char *buf, size_t *i_buf, char **lines, size_t n_lines, struct lab
         code = {};
         arg = 0;
     }
-
-    // (*i_buf)++; // starts from the 0
 
     return 0;
 }

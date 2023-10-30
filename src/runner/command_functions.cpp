@@ -13,12 +13,33 @@ static inline int is_equal(elem_t x, elem_t y, double epsilon = 1e-9)
     return (fabs (x - y) < epsilon);
 }
 
+#define MAKE_F_JUMP_EQUAL(sign, proc, arg, cur_code)\
+        elem_t arg_1 = 0;                           \
+        elem_t arg_2 = 0;                           \
+        stack_pop((proc->stk), (&arg_1));           \
+        stack_pop((proc->stk), (&arg_2));           \
+        if(sign(is_equal(arg_1, arg_2)))            \
+        {                                           \
+            F_JMP((proc), (arg), (cur_code));       \
+        }
+
+#define MAKE_F_JUMP_ABE(sign, proc, arg, cur_code)\
+        elem_t arg_1 = 0;                           \
+        elem_t arg_2 = 0;                           \
+        stack_pop((proc->stk), (&arg_1));           \
+        stack_pop((proc->stk), (&arg_2));           \
+        if(is_equal(arg_1, arg_2) || (arg_2) sign (arg_1))\
+        {                                           \
+            F_JMP((proc), (arg), (cur_code));       \
+        }
+
+
 #define MAKE_F_JUMP(sign, proc, arg, cur_code)      \
         elem_t arg_1 = 0;                           \
         elem_t arg_2 = 0;                           \
         stack_pop((proc->stk), (&arg_1));           \
         stack_pop((proc->stk), (&arg_2));           \
-        if((arg_1) sign (arg_2))                    \
+        if((arg_2) sign (arg_1))                    \
         {                                           \
             F_JMP((proc), (arg), (cur_code));       \
         }

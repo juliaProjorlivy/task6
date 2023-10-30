@@ -7,7 +7,7 @@
 #define OP_MASK 0x1f
 
 static const size_t N_LABELS = 10;
-static const ssize_t label_length = 20;
+static const ssize_t label_length = 50;
 
 struct label
 {
