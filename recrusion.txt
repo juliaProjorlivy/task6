@@ -1,0 +1,65 @@
+main :
+call prnt_enter
+in
+pop rax
+push rax
+push 0
+je first
+push rax
+push 1
+je second
+push 0
+push 1
+push 2
+pop rdx
+check :
+push rdx
+push rax
+jb next
+out
+hlt
+next :
+call sum
+push 1
+push rdx
+add
+pop rdx
+jmp check
+first :
+push 0
+out
+hlt
+second :
+push 1
+out
+hlt
+
+sum :
+pop rbx
+push rbx
+add
+pop rcx
+push rbx
+push rcx
+ret
+
+prnt_enter :
+push 101
+cout
+push 110
+cout
+push 116
+cout
+push 101
+cout
+push 114
+cout
+push 32
+cout
+push 110
+cout
+push 58
+cout
+push 10
+cout
+ret

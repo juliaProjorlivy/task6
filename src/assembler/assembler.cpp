@@ -45,13 +45,13 @@ int fill_command(struct codes *code, char *str_command)
 }
 
 
-int label_arg(elem_t *arg, struct label *labels, const char *str_command, size_t n_filled_labels)
+int label_arg(elem_t *arg, const char *str_command, struct labels *Labels)
 {
-    for(size_t i_label = 0; i_label < n_filled_labels; i_label++)
+    for(size_t i_label = 0; i_label < Labels->n_filled; i_label++)
     {
-        if(!strcmp((labels + i_label)->name, str_command))
+        if(!strcmp((*(Labels->all_labels) + i_label)->name, str_command))
         {
-            *arg = (elem_t )((labels + i_label)->ip);
+            *arg = (elem_t )((*(Labels->all_labels) + i_label)->ip);
             return 1;
         }
     }
@@ -140,7 +140,7 @@ int pop_has_arg(elem_t *arg, struct codes *code, const char *line)
     return 1;
 }
 
-int jump_has_arg(elem_t *arg, struct codes *code, const char *line, struct label *labels, size_t *n_filled_labels)
+int jump_has_arg(elem_t *arg, struct codes *code, const char *line, struct labels *Labels)
 {
     char str_label[max_length] = {};
 
@@ -150,7 +150,7 @@ int jump_has_arg(elem_t *arg, struct codes *code, const char *line, struct label
         return 0;
     }
 
-    if(!label_arg(arg, labels, str_label, *n_filled_labels))
+    if(!label_arg(arg, str_label, Labels))
     {
         *arg = -1;
         return 1;
@@ -159,71 +159,58 @@ int jump_has_arg(elem_t *arg, struct codes *code, const char *line, struct label
     return 1;
 }
 
-void free_labels(struct label *labels, size_t n_in_labels)
+void free_labels(struct labels *Labels, size_t n_in_labels)
 {
     for(size_t i = 0; i < n_in_labels; i++)
     {
-        free((labels + i)->name);
+        free((*(Labels->all_labels) + i)->name);
     }
-    free(labels);
+    free(*(Labels->all_labels));
 }
 
-int fill_empty_labels(struct label *labels, size_t i_label, size_t n_labels)
+int fill_empty_labels(struct labels *Labels)
 {
-    for(; i_label < n_labels; i_label++)
+    size_t i_label = Labels->n_filled;
+    for(; i_label < Labels->n_labels; i_label++)
     {
         char *name = (char *)calloc(sizeof(char), label_length);
         if(name == NULL)
         {
             VERROR_MEM;
-            free_labels(labels, i_label);
+            free_labels(Labels, i_label);
             return 1;
         }
-        labels[i_label].name = name;
-        labels[i_label].ip = -1;
+        (*(Labels->all_labels))[i_label].name = name;
+        (*(Labels->all_labels))[i_label].ip = -1;
     }
 
     return 0;
 }
 
-struct label *fill_labels(size_t *n_labels, size_t *n_filled_labels)
+struct label **realloc_labels(struct labels *Labels)
 {
-    struct label *labels = (struct label *)calloc(sizeof(label), *n_labels);
-    if(labels == NULL)
+    (Labels->n_labels) *= 2;
+    struct label *lbls = (struct label *)realloc(*(Labels->all_labels), (Labels->n_labels) *  sizeof(label));
+
+    if(lbls == NULL)
     {
         VERROR_MEM;
         return NULL;
     }
-    if(fill_empty_labels(labels, *n_filled_labels, *n_labels))
+    *(Labels->all_labels) = lbls;
+    
+    if(fill_empty_labels(Labels))
     {
         VERROR_MEM;
         return NULL;
     }
 
-    return labels;
-}
-
-struct label *realloc_labels(size_t *n_labels, size_t *n_filled_labels, struct label *labels)
-{
-    (*n_labels) *= 2;
-    labels = (label *)realloc(labels, (*n_labels) * sizeof(label));
-    if(labels == NULL)
-    {
-        VERROR_MEM;
-        return NULL;
-    }
-    if(fill_empty_labels(labels, *n_filled_labels, *n_labels))
-    {
-        VERROR_MEM;
-        return NULL;
-    }
-
-    return labels;
+    return Labels->all_labels;
 }
 
 #define CASE_JUMP(NAME)                                                 \
         case NAME:                                                      \
-            if(!jump_has_arg(arg, code, line, labels, n_filled_labels)) \
+            if(!jump_has_arg(arg, code, line, Labels))                  \
             {                                                           \
                 return 1;                                               \
             }                                                           \
@@ -234,7 +221,7 @@ struct label *realloc_labels(size_t *n_labels, size_t *n_filled_labels, struct l
             return 0
 
 
-int asm_for_single_line(char *buf, size_t *i_buf, elem_t *arg, const char *line, struct codes *code, struct label *labels, size_t *n_filled_labels)
+int asm_for_single_line(char *buf, size_t *i_buf, elem_t *arg, const char *line, struct codes *code, struct labels *Labels)
 {
     char str_command[max_length] = {};
     int len_com = 0;
@@ -248,16 +235,16 @@ int asm_for_single_line(char *buf, size_t *i_buf, elem_t *arg, const char *line,
 
     if(!fill_command(code, str_command))
     {
-        if(label_arg(arg, labels, str_command, *n_filled_labels))
+        if(label_arg(arg, str_command, Labels))
         {
             return 0;
         }
 
         if((line[len_com + 1] == ':') && (isspace(line[len_com + 2]) || line[len_com + 2] == 0))
         {
-            strncpy((labels + *n_filled_labels)->name, line, (size_t)len_com);
-            (labels + *n_filled_labels)->ip = *((ssize_t *)(i_buf));
-            (*n_filled_labels)++;
+            strncpy((*(Labels->all_labels) + Labels->n_filled)->name, line, (size_t)len_com);
+            (*(Labels->all_labels) + Labels->n_filled)->ip = *((ssize_t *)(i_buf));
+            (Labels->n_filled)++;
             return 0;
         }
         VERROR("no such command as %s", str_command);
@@ -314,7 +301,7 @@ int asm_for_single_line(char *buf, size_t *i_buf, elem_t *arg, const char *line,
 }
 
 //                      arr of ptrs of lines | number of lines
-int assembler(char *buf, size_t *i_buf, char **lines, size_t n_lines, struct label *labels, size_t *n_labels, size_t *n_filled_labels)
+int assembler(char *buf, size_t *i_buf, char **lines, size_t n_lines, struct labels *Labels)
 {
     *(i_buf) = 0;
    
@@ -323,21 +310,22 @@ int assembler(char *buf, size_t *i_buf, char **lines, size_t n_lines, struct lab
     elem_t arg = 0;
     for(size_t line_i = 0; line_i < n_lines; line_i++)
     {
-        if(asm_for_single_line(buf, i_buf, &arg, lines[line_i], &code, labels, n_filled_labels))
+        if(asm_for_single_line(buf, i_buf, &arg, lines[line_i], &code, Labels))
         {
             VERROR("troubles assembling the line \"%s\"", lines[line_i]);
-            // free(all_codes);
-            free_labels(labels, *n_labels);
+            free_labels(Labels, Labels->n_labels);
             return 1;
         }
 
-        if(*n_filled_labels + 1 >= *n_labels)
+        if(Labels->n_filled + 2 >= Labels->n_labels)
         {
-            if(!(labels = realloc_labels(n_labels, n_filled_labels, labels)))
+            // printf("nlab = %zu, nfill = %zu, labels = %p\n", *n_labels, *n_filled_labels, labels);
+            if(!(realloc_labels(Labels)))
             {
                 VERROR_MEM;
                 return 1;
             }
+            // printf("nlab = %zu, nfill = %zu, labels = %p\n", *n_labels, *n_filled_labels, labels);
         }
         
         code = {};

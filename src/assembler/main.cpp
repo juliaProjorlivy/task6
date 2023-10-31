@@ -7,37 +7,40 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-int main(int argc, char *argv[])
+int main()
 {
-    if(argc < 3)
-    {
-        printf(RED "no needed file" END_OF_RED);
-        return 1;
-    }
+    // if(argc < 3)
+    // {
+    //     printf(RED "no needed file" END_OF_RED);
+    //     return 1;
+    // }
     size_t data_size = 0;
     size_t str_count = 0;
     size_t i_buf = 0;
 
-    size_t n_labels = 50;
-    size_t n_filled_labels = 0;
-
-    struct label *labels = fill_labels(&n_labels, &n_filled_labels);
-    if(labels == NULL)
+    struct labels Labels = {};
+    Labels.n_labels = 2;
+    Labels.n_filled = 0;
+    struct label *lbls = (struct label *)calloc(sizeof(label), Labels.n_labels);
+    if(lbls == NULL)
     {
         VERROR_MEM;
         return 1;
     }
-
-    char *data = get_data_from_file(argv[1], &data_size);
+    Labels.all_labels = &lbls;
+    fill_empty_labels(&Labels);
+    char *data = get_data_from_file("recrusion.txt", &data_size);
     if(data == NULL)
     {
         VERROR_MEM;
+        free_labels(&Labels, Labels.n_labels);
         return 1;
     }
     char **lines = make_ptr_array(data, &str_count);
     if(lines == NULL)
     {
         VERROR_MEM;
+        free_labels(&Labels, Labels.n_labels);
         return 1;
     }
 
@@ -45,14 +48,15 @@ int main(int argc, char *argv[])
     if(buf == NULL)
     {
         VERROR_MEM;
+        free_labels(&Labels, Labels.n_labels);
         return 1;
     }
 
-    if(assembler(buf, &i_buf, lines, str_count, labels, &n_labels, &n_filled_labels))
+    if(assembler(buf, &i_buf, lines, str_count, &Labels))
     {
         return 1;
     }
-    if(assembler(buf, &i_buf, lines, str_count, labels, &n_labels, &n_filled_labels))
+    if(assembler(buf, &i_buf, lines, str_count, &Labels))
     {
         return 1;
     }
@@ -62,14 +66,14 @@ int main(int argc, char *argv[])
         VERROR_MEM;
         return 1;
     }
-    if(write_file(buf, argv[2], str_count, i_buf))
+    if(write_file(buf, "recrusion_byte_code.bin", str_count, i_buf))
     {
         return 1;
     }
 
-    printf("n lab = %zu\n", n_labels);
+    // printf("n lab = %zu\n", n_labels);
 
-    free_labels(labels, n_labels);
+    free_labels(&Labels, Labels.n_labels);
     free(data);
     free(lines);
     free(buf);

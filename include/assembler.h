@@ -9,6 +9,13 @@
 static const size_t N_LABELS = 10;
 static const ssize_t label_length = 50;
 
+struct labels
+{
+    struct label **all_labels;
+    size_t n_labels;
+    size_t n_filled;
+};
+
 struct label
 {
     char *name;
@@ -19,24 +26,22 @@ int fill_register(struct codes *code, char *str_register);
 
 int fill_command(struct codes *code, char *str_command);
 
-int label_arg(elem_t *arg, struct label *labels, const char *str_command, size_t n_filled_labels);
+int label_arg(elem_t *arg, const char *str_command, struct labels *Labels);
 
 int push_has_arg(elem_t *arg, struct codes *code, const char *line);
 
 int pop_has_arg(elem_t *arg, struct codes *code, const char *line);
 
-int jump_has_arg(elem_t *arg, struct codes *code, const char *line, struct label *labels, size_t *n_filled_labels);
+int jump_has_arg(elem_t *arg, struct codes *code, const char *line, struct labels *Labels);
 
-int fill_empty_labels(struct label *labels, size_t i_label, size_t n_labels);
+int fill_empty_labels(struct labels *Labels);
 
-struct label *fill_labels(size_t *n_labels, size_t *n_filled_labels);
+int asm_for_single_line(char *buf, size_t *i_buf, elem_t *arg, const char *line, struct codes *code, struct labels *Labels);
 
-int asm_for_single_line(char *buf, size_t *i_buf, elem_t *arg, const char *line, struct codes *code, struct label *labels, size_t *n_filled_labels);
+int assembler(char *buf, size_t *i_buf, char **lines, size_t n_lines, struct labels *Labels);
 
-int assembler(char *buf, size_t *i_buf, char **lines, size_t n_lines, struct label *labels, size_t *n_labels, size_t *n_filled_labels);
+void free_labels(struct labels *Labels, size_t n_in_labels);
 
-void free_labels(struct label *labels, size_t n_in_labels);
-
-struct label *realloc_labels(size_t *n_labels, size_t *n_filled_labels, struct label *labels);
+struct label **realloc_labels(struct labels *Labels);
 
 #endif
