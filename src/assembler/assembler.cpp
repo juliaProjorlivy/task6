@@ -317,7 +317,7 @@ int assembler(char *buf, size_t *i_buf, char **lines, size_t n_lines, struct lab
             return 1;
         }
 
-        if(Labels->n_filled + 2 >= Labels->n_labels)
+        if(Labels->n_filled + 1 > Labels->n_labels)
         {
             // printf("nlab = %zu, nfill = %zu, labels = %p\n", *n_labels, *n_filled_labels, labels);
             if(!(realloc_labels(Labels)))
