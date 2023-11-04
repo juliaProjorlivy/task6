@@ -16,10 +16,10 @@ char *to_lower(const char *line, char *new_line)
 
 int fill_register(struct codes *code, char *str_register)
 {
-    char compare_line[max_length] = {};
     for(size_t reg_i = 0; reg_i < n_registers; reg_i++) // if it is one of registers:
     {
-        if(!strncmp(str_register, to_lower(registers[reg_i].str, compare_line), strlen(registers[reg_i].str)))
+        char compare_line[max_length] = {};
+        if(!strncmp(str_register, to_lower(registers[reg_i].str, compare_line), strlen(str_register)))
         {
             code->reg = (unsigned char )(reg_i + 1) & REG_MASK; 
             return 1;
@@ -31,14 +31,16 @@ int fill_register(struct codes *code, char *str_register)
 
 int fill_command(struct codes *code, char *str_command)
 {
-    char compare_line[max_length] = {};
+    // char compare_line[max_length] = {};
     for(size_t com_i = 1; com_i < n_commands; com_i++) // the first one is NOT COMMAND
     {
-        if(!strncmp(str_command, to_lower(commands[com_i].str, compare_line), strlen(commands[com_i].str)))
+        char compare_line[max_length] = {};
+        if(!strncmp(str_command, to_lower(commands[com_i].str, compare_line), strlen(str_command)))
         {
             code->op = (unsigned char)(commands[com_i].d) & OP_MASK;
             return 1;
         }
+        
     }
 
     return 0;

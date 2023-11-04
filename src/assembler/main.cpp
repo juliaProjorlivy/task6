@@ -7,13 +7,13 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-int main()
+int main(int argc, char *argv[])
 {
-    // if(argc < 3)
-    // {
-    //     printf(RED "no needed file" END_OF_RED);
-    //     return 1;
-    // }
+    if(argc < 3)
+    {
+        printf(RED "no needed file" END_OF_RED);
+        return 1;
+    }
     size_t data_size = 0;
     size_t str_count = 0;
     size_t i_buf = 0;
@@ -29,7 +29,7 @@ int main()
     }
     Labels.all_labels = &lbls;
     fill_empty_labels(&Labels);
-    char *data = get_data_from_file("recrusion.txt", &data_size);
+    char *data = get_data_from_file(argv[1], &data_size);
     if(data == NULL)
     {
         VERROR_MEM;
@@ -66,12 +66,10 @@ int main()
         VERROR_MEM;
         return 1;
     }
-    if(write_file(buf, "recrusion_byte_code.bin", str_count, i_buf))
+    if(write_file(buf, argv[2], str_count, i_buf))
     {
         return 1;
     }
-
-    // printf("n lab = %zu\n", n_labels);
 
     free_labels(&Labels, Labels.n_labels);
     free(data);

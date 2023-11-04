@@ -1,0 +1,107 @@
+main :
+push 3600
+pop rbx
+push 0
+pop rax
+push 39
+pop [3]
+push 50
+pop [4]
+push 25
+pop [5]
+push 24
+push 11
+div
+pop [6]
+
+do :
+push 1
+call whole
+add
+push [6]
+mul
+pop rcx
+push rax
+call whole
+push 120
+mul
+sub
+pop rdx
+
+push rcx
+push [3]
+sub
+push rcx
+push [3]
+sub
+mul
+push rdx
+push [4]
+sub
+push rdx
+push [4]
+sub
+mul
+add
+push [5]
+push [5]
+mul
+call print
+push rax
+push 1
+add
+pop rax
+push rbx
+push rax
+ja do
+push 0
+cout
+push 10
+cout
+push 111
+cout
+push 10
+cout
+hlt
+
+print :
+sub
+pop [33]
+push [33]
+push [33]
+mul
+push 2250
+jbe fill
+push 32
+cout
+ret
+fill :
+push 35
+cout
+ret
+
+whole :
+push 0
+pop [1]
+push rax
+push 120
+jb less
+push rax
+pop [0]
+push 0
+pop [1]
+continue :
+push 1
+push [1]
+add
+pop [1]
+push [0]
+push 120
+sub
+pop [0]
+push [0]
+push 120
+jae continue
+less :
+push [1]
+ret

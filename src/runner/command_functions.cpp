@@ -28,7 +28,11 @@ static inline int is_equal(elem_t x, elem_t y, double epsilon = 1e-9)
         elem_t arg_2 = 0;                           \
         stack_pop((proc->stk), (&arg_1));           \
         stack_pop((proc->stk), (&arg_2));           \
-        if(is_equal(arg_1, arg_2) || (arg_2) sign (arg_1))\
+        if(is_equal(arg_1, arg_2))                  \
+        {                                           \
+            F_JMP((proc), (arg), (cur_code));       \
+        }                                           \
+        else if((arg_2) sign (arg_1))               \
         {                                           \
             F_JMP((proc), (arg), (cur_code));       \
         }
