@@ -93,7 +93,7 @@ static inline int is_equal(elem_t x, elem_t y, double epsilon = 1e-9)
 
  // TODO: make double comparison with function
 
-#define DEF_CMD(NAME, command_code, code) status F_##NAME(struct spu *proc, elem_t arg, struct codes cur_code){code return CONTINUE;}
+#define DEF_CMD(NAME, command_code, n_args, code) status F_##NAME(struct spu *proc, elem_t arg, struct codes cur_code){code return CONTINUE;}
 #include "def_cmd.txt"
 #undef DEF_CMD
 

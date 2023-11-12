@@ -1,10 +1,10 @@
-DEF_CMD(NOT_COMMAND, 0, (void) proc; 
+DEF_CMD(NOT_COMMAND, 0, 0, (void) proc; 
                         (void) arg;
                         (void) cur_code;
                         return END;)
-DEF_CMD(PUSH, 1, PUSH_FUNC)
-DEF_CMD(POP, 2, POP_FUNC)
-DEF_CMD(ADD, 3,
+DEF_CMD(PUSH, 1, 1, PUSH_FUNC)
+DEF_CMD(POP, 2, 1, POP_FUNC)
+DEF_CMD(ADD, 3, 0,
     (void)arg;
     (void)cur_code;
     elem_t arg_1 = 0;
@@ -12,7 +12,7 @@ DEF_CMD(ADD, 3,
     stack_pop(proc->stk, &arg_1);
     stack_pop(proc->stk, &arg_2);
     stack_push(proc->stk, arg_2 + arg_1);)
-DEF_CMD(SUB, 4,
+DEF_CMD(SUB, 4, 0,
     (void)arg;
     (void)cur_code;
     elem_t arg_1 = 0;
@@ -20,7 +20,7 @@ DEF_CMD(SUB, 4,
     stack_pop(proc->stk, &arg_1);
     stack_pop(proc->stk, &arg_2);
     stack_push(proc->stk, arg_2 - arg_1);)
-DEF_CMD(MUL, 5,
+DEF_CMD(MUL, 5, 0,
     (void)arg;
     (void)cur_code;
     elem_t arg_1 = 0;
@@ -28,7 +28,7 @@ DEF_CMD(MUL, 5,
     stack_pop(proc->stk, &arg_1);
     stack_pop(proc->stk, &arg_2);
     stack_push(proc->stk, arg_2 * arg_1);)
-DEF_CMD(DIV, 6,
+DEF_CMD(DIV, 6, 0,
     (void)arg;
     (void)cur_code;
     elem_t arg_1 = 0;
@@ -44,7 +44,7 @@ DEF_CMD(DIV, 6,
         VERROR("division by zero");
         return END;
     })
-DEF_CMD(SQRT, 7, 
+DEF_CMD(SQRT, 7, 0,
     (void)arg;
     (void)cur_code;
     elem_t value = 0;
@@ -59,19 +59,19 @@ DEF_CMD(SQRT, 7,
         VERROR("taking the root of a negative number");
         return END;
     })
-DEF_CMD(COS, 8,
+DEF_CMD(COS, 8, 0,
     (void)arg;
     (void)cur_code;
     elem_t value = 0;
     stack_pop(proc->stk, &value);
     stack_push(proc->stk, cos(value));)
-DEF_CMD(SIN, 9,
+DEF_CMD(SIN, 9, 0,
     (void)arg;
     (void)cur_code;
     elem_t value = 0;
     stack_pop(proc->stk, &value);
     stack_push(proc->stk, sin(value));)
-DEF_CMD(IN, 10,
+DEF_CMD(IN, 10, 0,
     (void)arg;
     (void)cur_code;
     elem_t value = 0;
@@ -82,35 +82,35 @@ DEF_CMD(IN, 10,
         return END;
     }
     stack_push(proc->stk, value);)
-DEF_CMD(OUT, 11,
+DEF_CMD(OUT, 11, 0,
     (void)arg;
     (void)cur_code;
     elem_t value = 0;
     stack_pop(proc->stk, &value);
     printf(ELEM_PRINT_SPEC "\n", value);)
-DEF_CMD(HLT, 12,
+DEF_CMD(HLT, 12, 0,
     (void)arg;
     (void)cur_code;
     stack_dtor(proc->stk);
     stack_dtor(proc->address_stk);
     return END;)
-DEF_CMD(JMP, 13, (void) cur_code;
+DEF_CMD(JMP, 13, 1, (void) cur_code;
                  proc->ip_buf = (size_t)arg;)
-DEF_CMD(JA, 14, MAKE_F_JUMP(>, proc, arg, cur_code))
-DEF_CMD(JAE, 15, MAKE_F_JUMP_ABE(>, proc, arg, cur_code))
-DEF_CMD(JB, 16, MAKE_F_JUMP(<, proc, arg, cur_code))
-DEF_CMD(JBE, 17, MAKE_F_JUMP_ABE(<, proc, arg, cur_code))
-DEF_CMD(JNE, 18, MAKE_F_JUMP_EQUAL(!, proc, arg, cur_code))
-DEF_CMD(JE, 19, MAKE_F_JUMP_EQUAL( , proc, arg, cur_code))
-DEF_CMD(CALL, 20,
+DEF_CMD(JA, 14, 1, MAKE_F_JUMP(>, proc, arg, cur_code))
+DEF_CMD(JAE, 15, 1, MAKE_F_JUMP_ABE(>, proc, arg, cur_code))
+DEF_CMD(JB, 16, 1, MAKE_F_JUMP(<, proc, arg, cur_code))
+DEF_CMD(JBE, 17, 1, MAKE_F_JUMP_ABE(<, proc, arg, cur_code))
+DEF_CMD(JNE, 18, 1, MAKE_F_JUMP_EQUAL(!, proc, arg, cur_code))
+DEF_CMD(JE, 19, 1, MAKE_F_JUMP_EQUAL( , proc, arg, cur_code))
+DEF_CMD(CALL, 20, 1,
     stack_push(proc->address_stk, (elem_t)(proc->ip_buf));
     F_JMP(proc, arg, cur_code);)
-DEF_CMD(RET, 21,
+DEF_CMD(RET, 21, 0,
     (void)arg;
     elem_t new_ip_buf = 0;
     stack_pop(proc->address_stk, &new_ip_buf);
     F_JMP(proc, new_ip_buf, cur_code);)
-DEF_CMD(COUT, 22,
+DEF_CMD(COUT, 22, 0,
     (void)arg;
     (void)cur_code;
     elem_t value = 0;

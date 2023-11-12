@@ -17,7 +17,7 @@ typedef enum
 } reg_t;
 #undef DEF_REG
 
-#define DEF_CMD(NAME, command_code, code) NAME = command_code,
+#define DEF_CMD(NAME, command_code, n_args, code) NAME = command_code,
 typedef enum
 {
     #include "def_cmd.txt"
@@ -38,7 +38,7 @@ struct str_digit
 };
 
 
-#define DEF_CMD(NAME, command_code, code) {(NAME), #NAME},
+#define DEF_CMD(NAME, command_code, n_args, code) {(NAME), #NAME},
 static struct str_digit commands[] = 
 {
 #include "def_cmd.txt" 

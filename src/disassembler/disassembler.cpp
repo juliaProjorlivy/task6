@@ -3,14 +3,41 @@
 #include "verror.h"
 #include <stdlib.h>
 
+#define DEF_CMD(NAME, command_code, n_args, code)   \
+        case NAME:                                  \
+            return (n_args);
+
 static int has_arg(struct codes *code)
 {
     command_t com = (command_t)(code->op);
 
-    return ((com == POP && code->to_ram) || (com == PUSH && !(code->reg)) ||
-    com == JMP || com == JA || com == JAE || com == JB || com == JBE ||
-    com == JE || com == JNE || com == CALL);
+    if(com == PUSH || com == POP)
+    {
+        return (!(code->reg));
+    }
+    switch (com)
+    {
+#include "def_cmd.txt"
+        default:
+            VERROR("unexpected command");
+            return 0;
+    }
+    // return 0;
+    // TODO: use switch and def_cmd.
+    // return ((com == POP && !(code->reg)) || (com == PUSH && !(code->reg)) ||
+    // com == JMP || com == JA || com == JAE || com == JB || com == JBE ||
+    // com == JE || com == JNE || com == CALL);
 }
+#undef DEF_CMD
+
+// static int has_arg(struct codes *code)
+// {
+//     command_t com = (command_t)(code->op);
+
+//     return ((com == POP && code->to_ram) || (com == PUSH && !(code->reg)) ||
+//     com == JMP || com == JA || com == JAE || com == JB || com == JBE ||
+//     com == JE || com == JNE || com == CALL);
+// }
 const char *is_register(struct codes *code)
 {
     for(size_t reg_i = 0; reg_i < n_registers; reg_i++) // if it is one of registers:

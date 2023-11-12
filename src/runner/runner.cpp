@@ -3,8 +3,8 @@
 #include "verror.h"
 #include "spu_dump.h"
 
-#define DEF_CMD(NAME, command_code, code)   \
-        case NAME:                          \
+#define DEF_CMD(NAME, command_code, n_args, code)   \
+        case NAME:                                  \
             return F_##NAME(proc, arg, cur_code);
 
 
@@ -22,16 +22,34 @@ status compare_with_commands(struct spu *proc, elem_t arg, struct codes cur_code
 
     return END; // SMTH WENT WRONG
 }
+#undef DEF_CMD
+
+#define DEF_CMD(NAME, command_code, n_args, code)   \
+        case NAME:                                  \
+            return (n_args);
 
 size_t has_arg(struct codes *code)
 {
     command_t com = (command_t)(code->op);
 
+    if(com == PUSH || com == POP)
+    {
+        return (!(code->reg));
+    }
+    switch (com)
+    {
+#include "def_cmd.txt"
+        default:
+            VERROR("unexpected command");
+            return 0;
+    }
+    // return 0;
     // TODO: use switch and def_cmd.
-    return ((com == POP && !(code->reg)) || (com == PUSH && !(code->reg)) ||
-    com == JMP || com == JA || com == JAE || com == JB || com == JBE ||
-    com == JE || com == JNE || com == CALL);
+    // return ((com == POP && !(code->reg)) || (com == PUSH && !(code->reg)) ||
+    // com == JMP || com == JA || com == JAE || com == JB || com == JBE ||
+    // com == JE || com == JNE || com == CALL);
 }
+#undef DEF_CMD
 
 int runner(struct spu *proc)
 {
