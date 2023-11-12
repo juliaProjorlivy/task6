@@ -17,7 +17,7 @@ SRCS_DASM = src/disassembler/disassembler.cpp src/disassembler/file_func_dasm.cp
 
 OBJ = build/verror.o
 OBJ_ASM = $(patsubst %.cpp, build/assembler/%.o, $(subst src/assembler/, , $(SRCS_ASM))) 
-OBJ_VM = $(patsubst %.cpp, build/runner/%.o, $(subst src/runner/, , $(SRCS_VM))) lib/stack/lib/libStack.a
+OBJ_VM = $(patsubst %.cpp, build/runner/%.o, $(subst src/runner/, , $(SRCS_VM))) lib/Stack/lib/libStack.a
 OBJ_DASM = $(patsubst %.cpp, build/disassembler/%.o, $(subst src/disassembler/, , $(SRCS_DASM))) 
 
 EXECUTABLE_ASM = assembler
@@ -54,8 +54,8 @@ build/disassembler/%.o: src/disassembler/%.cpp
 	mkdir -p ./build/disassembler
 	@$(CXX) $(CXX_FLAGS) -c -o $@ $<
 
-lib/stack/lib/libStack.a:
-	make lib -C lib/stack/
+lib/Stack/lib/libStack.a:
+	make lib -C lib/Stack/
 
 pre_asm:
 	@echo "CXX pre $(EXECUTABLE_ASM)"
