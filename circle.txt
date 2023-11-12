@@ -1,16 +1,20 @@
 main :
+push 100
+pop rcx
 push 3600
 pop rbx
+push 3200
+pop [34]
 push 0
 pop rax
-push 39
+push 31
 pop [3]
-push 50
+push 40
 pop [4]
-push 25
+push 28
 pop [5]
-push 24
-push 11
+push 13
+push 6.5
 div
 pop [6]
 
@@ -20,25 +24,25 @@ call whole
 add
 push [6]
 mul
-pop rcx
+pop [88]
 push rax
 call whole
 push 120
 mul
 sub
-pop rdx
+pop [89]
 
-push rcx
+push [88]
 push [3]
 sub
-push rcx
+push [88]
 push [3]
 sub
 mul
-push rdx
+push [89]
 push [4]
 sub
-push rdx
+push [89]
 push [4]
 sub
 mul
@@ -54,12 +58,7 @@ pop rax
 push rbx
 push rax
 ja do
-push 0
-cout
-push 10
-cout
-push 111
-cout
+call run
 push 10
 cout
 hlt
@@ -70,14 +69,22 @@ pop [33]
 push [33]
 push [33]
 mul
-push 2250
+push [34]
 jbe fill
 push 32
-cout
+pop [rcx]
+push rcx
+push 1
+add
+pop rcx
 ret
 fill :
 push 35
-cout
+pop [rcx]
+push rcx
+push 1
+add
+pop rcx
 ret
 
 whole :
@@ -105,3 +112,77 @@ jae continue
 less :
 push [1]
 ret
+
+do_ram :
+push 100
+pop rcx
+next :
+push [rcx]
+cout
+push rcx
+push 1
+add
+pop rcx
+push rcx
+push rbx
+jb next
+push 32
+cout
+push 32
+cout
+ret
+
+run :
+push 0
+pop rax
+jump :
+push 0
+pop rdx
+take_time :
+push rdx
+push 10000
+push rdx
+push 1
+add
+pop rdx
+jb take_time
+call do_ram
+push rax
+push 50
+push rax
+push 1
+add
+pop rax
+jb jump
+ret
+
+fill_space :
+push 3702
+pop rax
+cntn_fll_spc :
+push 32
+pop [rax]
+push rax
+push 1
+add
+pop rax
+push rax
+push 7300
+jbe cntn_fll_spc
+ret
+
+erase :
+push 3702
+pop rbx
+cnt_rs :
+push [rbx]
+cout
+push rbx
+push 1
+add
+pop rbx
+push rbx
+push 7300
+jbe cnt_rs
+ret
+

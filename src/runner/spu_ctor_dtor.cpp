@@ -5,7 +5,7 @@
 #include <stdlib.h>
 
 static const int capacity = 100;
-static const int ram_size = 3602;
+static const int ram_size = 7600;
 
 int spu_ctor(struct spu *proc, char *buf, size_t buf_size)
 {
